@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>AntiquaVision Smart PRO+</title>
+<title>AntiquaVision Master</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -59,7 +59,7 @@ input,select{
 table{
  width:100%;
  border-collapse:collapse;
- font-size:12px;
+ font-size:13px;
 }
 
 th,td{
@@ -71,7 +71,7 @@ th{color:gold}
 
 .grid{
  display:grid;
- grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
  gap:15px;
 }
 
@@ -83,29 +83,13 @@ th{color:gold}
  text-align:center;
 }
 
-.alert{
- background:#200;
- border:1px solid red;
- padding:10px;
- border-radius:8px;
- margin-top:10px;
-}
-
-.good{
- background:#021;
- border:1px solid green;
- padding:10px;
- border-radius:8px;
- margin-top:10px;
-}
-
 </style>
 </head>
 
 <body>
 
 <header>
-AntiquaVision Smart PRO+ — Business Intelligence
+AntiquaVision MASTER — Business Intelligence
 </header>
 
 <div class="container">
@@ -114,7 +98,7 @@ AntiquaVision Smart PRO+ — Business Intelligence
 
 <div class="card">
 
-<h3>📂 Carica Excel / CSV</h3>
+<h3>📂 Carica File</h3>
 
 <input type="file" id="fileInput">
 
@@ -128,133 +112,85 @@ AntiquaVision Smart PRO+ — Business Intelligence
 
 <div class="card">
 
-<h3>📊 Indicatori Principali</h3>
+<h3>📊 Indicatori</h3>
 
 <div class="grid" id="kpi"></div>
 
 </div>
 
-<!-- SALES -->
+<!-- GRAFICI BASE -->
 
 <div class="card">
-
-<h3>📈 Vendite per Mese</h3>
-
+<h3>📈 Vendite Mensili</h3>
 <select id="typeSales" onchange="drawSalesChart()">
-<option>bar</option>
-<option>line</option>
-<option>pie</option>
-<option>doughnut</option>
+<option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
 </select>
-
 <canvas id="salesChart"></canvas>
-
 </div>
 
-<!-- PROFIT -->
-
 <div class="card">
-
-<h3>💰 Profitto per Tipologia</h3>
-
+<h3>💰 Profitto per Categoria</h3>
 <select id="typeProfit" onchange="drawProfitChart()">
-<option>bar</option>
-<option>line</option>
-<option>pie</option>
-<option>doughnut</option>
+<option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
 </select>
-
 <canvas id="profitChart"></canvas>
-
 </div>
 
-<!-- COUNTRY -->
-
 <div class="card">
-
-<h3>🌍 Vendite per Paese</h3>
-
+<h3>🌍 Paesi</h3>
 <select id="typeCountry" onchange="drawCountryChart()">
-<option>bar</option>
-<option>pie</option>
-<option>doughnut</option>
+<option>bar</option><option>pie</option><option>doughnut</option>
 </select>
-
 <canvas id="countryChart"></canvas>
-
 </div>
 
-<!-- SITE -->
-
 <div class="card">
-
-<h3>🛒 Vendite per Canale</h3>
-
-<select id="typeSite" onchange="drawSiteChart()">
-<option>bar</option>
-<option>pie</option>
-<option>doughnut</option>
-</select>
-
-<canvas id="siteChart"></canvas>
-
-</div>
-
-<!-- ERA -->
-
-<div class="card">
-
-<h3>🏛️ Profitto per Epoca</h3>
-
+<h3>🏛️ Epoche</h3>
 <select id="typeEra" onchange="drawEraChart()">
-<option>bar</option>
-<option>line</option>
-<option>pie</option>
-<option>doughnut</option>
+<option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
 </select>
-
 <canvas id="eraChart"></canvas>
-
 </div>
 
-<!-- VELOCITA -->
+<!-- NUOVE ANALISI -->
 
 <div class="card">
-
-<h3>⚡ Velocità di Vendita (Mesi)</h3>
-
-<canvas id="speedChart"></canvas>
-
+<h3>🏺 Tipologie più Vendute</h3>
+<canvas id="typeChart"></canvas>
 </div>
 
-<!-- MARGINE -->
+<div class="card">
+<h3>🛒 Acquisti per Epoca</h3>
+<canvas id="buyEraChart"></canvas>
+</div>
 
 <div class="card">
+<h3>📦 Quantità per Categoria</h3>
+<canvas id="qtyChart"></canvas>
+</div>
 
-<h3>📉 Margine per Tipologia</h3>
+<div class="card">
+<h3>📉 Perdite per Canale</h3>
+<canvas id="lossChart"></canvas>
+</div>
 
-<canvas id="marginChart"></canvas>
-
+<div class="card">
+<h3>💎 Profitto per Oggetto</h3>
+<canvas id="objChart"></canvas>
 </div>
 
 <!-- AI -->
 
 <div class="card">
-
-<h3>🤖 Consigli Strategici AI</h3>
-
+<h3>🤖 Consulente AI</h3>
 <div id="ai"></div>
-
 </div>
 
-<!-- TABLE -->
+<!-- TABELLA -->
 
 <div class="card">
-
-<h3>📋 Tutti i Dati</h3>
-
+<h3>📋 Archivio Completo</h3>
 <table id="table"></table>
-
 </div>
 
 </div>
@@ -268,46 +204,40 @@ let charts={};
 
 function loadFile(){
 
- let file=fileInput.files[0];
+ let f=fileInput.files[0];
+ if(!f) return alert("Seleziona file");
 
- if(!file){
-  alert("Seleziona un file");
-  return;
- }
+ let ext=f.name.split(".").pop().toLowerCase();
 
- let ext=file.name.split(".").pop().toLowerCase();
-
- if(ext==="xlsx") readExcel(file);
- else readCSV(file);
+ if(ext==="xlsx") readExcel(f);
+ else readCSV(f);
 }
 
 /* EXCEL */
 
-function readExcel(file){
+function readExcel(f){
 
- let reader=new FileReader();
+ let r=new FileReader();
 
- reader.onload=e=>{
+ r.onload=e=>{
 
-  let arr=new Uint8Array(e.target.result);
+  let a=new Uint8Array(e.target.result);
 
-  let wb=XLSX.read(arr,{type:"array"});
+  let wb=XLSX.read(a,{type:"array"});
 
-  let sheet=wb.Sheets[wb.SheetNames[0]];
+  let s=wb.Sheets[wb.SheetNames[0]];
 
-  let json=XLSX.utils.sheet_to_json(sheet);
-
-  process(json);
+  process(XLSX.utils.sheet_to_json(s));
  };
 
- reader.readAsArrayBuffer(file);
+ r.readAsArrayBuffer(f);
 }
 
 /* CSV */
 
-function readCSV(file){
+function readCSV(f){
 
- Papa.parse(file,{
+ Papa.parse(f,{
   header:true,
   skipEmptyLines:true,
   complete:r=>process(r.data)
@@ -335,20 +265,17 @@ function process(rows){
   data.push({
 
    nome:r["Merce venduta"]||"",
-   paese:r["Nazionalita acquirente"]||"",
-   sito:r["luogo di vendita"]||"",
    tipo:r["TIPOLOGIA"]||"",
    epoca:r["epoca"]||"",
+   paese:r["Nazionalita acquirente"]||"",
+   sito:r["luogo di vendita"]||"",
    mese:r["MeseNorm"]||"",
-   anno:r["anno di acquisto"]||"",
 
    prezzo:num(r["prezzo di vendita"]),
    costo:num(r["acquisto"]),
    profitto:num(r["profitto"]),
    margine:num(r["margine %"])
-
   });
-
  });
 
  result.innerHTML="✔️ "+data.length+" record caricati";
@@ -366,10 +293,13 @@ function renderAll(){
  drawSalesChart();
  drawProfitChart();
  drawCountryChart();
- drawSiteChart();
  drawEraChart();
- drawSpeedChart();
- drawMarginChart();
+
+ drawTypeChart();
+ drawBuyEraChart();
+ drawQtyChart();
+ drawLossChart();
+ drawObjChart();
 
  renderAI();
 }
@@ -378,44 +308,54 @@ function renderAll(){
 
 function renderKPI(){
 
- let rev=0,cost=0,prof=0;
+ let r=0,c=0,p=0;
 
  data.forEach(x=>{
-  rev+=x.prezzo;
-  cost+=x.costo;
-  prof+=x.profitto;
+  r+=x.prezzo;
+  c+=x.costo;
+  p+=x.profitto;
  });
 
- let roi=(prof/cost*100)||0;
+ let roi=(p/c*100)||0;
 
  kpi.innerHTML=`
 
- <div class="kpi"><b>${rev.toFixed(0)}€</b><br>Entrate</div>
- <div class="kpi"><b>${cost.toFixed(0)}€</b><br>Costi</div>
- <div class="kpi"><b>${prof.toFixed(0)}€</b><br>Profitto</div>
+ <div class="kpi"><b>${r.toFixed(0)}€</b><br>Entrate</div>
+ <div class="kpi"><b>${c.toFixed(0)}€</b><br>Costi</div>
+ <div class="kpi"><b>${p.toFixed(0)}€</b><br>Profitto</div>
  <div class="kpi"><b>${roi.toFixed(1)}%</b><br>ROI</div>
- <div class="kpi"><b>${data.length}</b><br>Vendite</div>
+ <div class="kpi"><b>${data.length}</b><br>Oggetti</div>
 
  `;
 }
 
-/* GROUP */
+/* UTILS */
 
-function group(key,value){
+function group(k,v){
 
  let o={};
 
  data.forEach(x=>{
-  if(!x[key]) return;
-  o[x[key]]=(o[x[key]]||0)+x[value];
+  if(!x[k]) return;
+  o[x[k]]=(o[x[k]]||0)+x[v];
  });
 
  return o;
 }
 
-/* DRAW */
+function count(k){
 
-function draw(ref,id,type,label,obj){
+ let o={};
+
+ data.forEach(x=>{
+  if(!x[k]) return;
+  o[x[k]]=(o[x[k]]||0)+1;
+ });
+
+ return o;
+}
+
+function draw(id,ref,type,label,obj){
 
  if(charts[ref]) charts[ref].destroy();
 
@@ -424,7 +364,7 @@ function draw(ref,id,type,label,obj){
   data:{
    labels:Object.keys(obj),
    datasets:[{
-    label:label,
+    label,
     data:Object.values(obj),
     backgroundColor:"gold"
    }]
@@ -432,66 +372,72 @@ function draw(ref,id,type,label,obj){
  });
 }
 
-/* CHARTS */
+/* BASE */
 
 function drawSalesChart(){
- draw("sales","salesChart",typeSales.value,"Vendite",group("mese","prezzo"));
+ draw("salesChart","sales",typeSales.value,"Vendite",group("mese","prezzo"));
 }
 
 function drawProfitChart(){
- draw("profit","profitChart",typeProfit.value,"Profitto",group("tipo","profitto"));
+ draw("profitChart","profit",typeProfit.value,"Profitto",group("tipo","profitto"));
 }
 
 function drawCountryChart(){
- draw("country","countryChart",typeCountry.value,"Paesi",group("paese","prezzo"));
-}
-
-function drawSiteChart(){
- draw("site","siteChart",typeSite.value,"Canali",group("sito","prezzo"));
+ draw("countryChart","country",typeCountry.value,"Paesi",group("paese","prezzo"));
 }
 
 function drawEraChart(){
- draw("era","eraChart",typeEra.value,"Epoche",group("epoca","profitto"));
+ draw("eraChart","era",typeEra.value,"Epoche",group("epoca","profitto"));
 }
 
-function drawSpeedChart(){
+/* EXTRA */
 
- let obj={};
+function drawTypeChart(){
+ draw("typeChart","type","bar","Tipologie",count("tipo"));
+}
+
+function drawBuyEraChart(){
+ draw("buyEraChart","buyEra","bar","Acquisti Epoca",group("epoca","costo"));
+}
+
+function drawQtyChart(){
+ draw("qtyChart","qty","bar","Quantità",count("nome"));
+}
+
+function drawLossChart(){
+
+ let o={};
 
  data.forEach(x=>{
-  if(!x.anno||!x.mese) return;
-
-  let speed=Math.abs(new Date().getFullYear()-Number(x.anno));
-
-  obj[x.nome]=(obj[x.nome]||0)+speed;
+  if(x.profitto<0){
+   o[x.sito]=(o[x.sito]||0)+x.profitto;
+  }
  });
 
- draw("speed","speedChart","bar","Velocità",obj);
+ draw("lossChart","loss","bar","Perdite",o);
 }
 
-function drawMarginChart(){
- draw("margin","marginChart","bar","Margine",group("tipo","margine"));
+function drawObjChart(){
+ draw("objChart","obj","bar","Profitto Oggetti",group("nome","profitto"));
 }
 
 /* TABLE */
 
 function renderTable(){
 
- let h="<tr><th>Nome</th><th>Mese</th><th>Tipo</th><th>Prezzo</th><th>Profitto</th><th>Margine</th><th>Epoca</th></tr>";
+ let h="<tr><th>Nome</th><th>Tipo</th><th>Mese</th><th>Prezzo</th><th>Profitto</th><th>Epoca</th></tr>";
 
  data.forEach(x=>{
 
   h+=`
   <tr>
    <td>${x.nome}</td>
-   <td>${x.mese}</td>
    <td>${x.tipo}</td>
+   <td>${x.mese}</td>
    <td>${x.prezzo}</td>
    <td>${x.profitto}</td>
-   <td>${x.margine}%</td>
    <td>${x.epoca}</td>
-  </tr>
-  `;
+  </tr>`;
  });
 
  table.innerHTML=h;
@@ -501,41 +447,26 @@ function renderTable(){
 
 function renderAI(){
 
- let byType=group("tipo","profitto");
- let bySite=group("sito","profitto");
- let byEra=group("epoca","profitto");
- let byMargin=group("tipo","margine");
-
- let bestType=maxKey(byType);
- let worstType=minKey(byType);
- let bestSite=maxKey(bySite);
- let bestEra=maxKey(byEra);
- let bestMargin=maxKey(byMargin);
+ let bestType=max(group("tipo","profitto"));
+ let bestEra=max(group("epoca","profitto"));
+ let worstSite=min(group("sito","profitto"));
 
  ai.innerHTML=`
 
- <div class="good">
  ✅ Miglior tipologia: <b>${bestType}</b><br>
- ✅ Miglior canale: <b>${bestSite}</b><br>
- ✅ Miglior epoca: <b>${bestEra}</b><br>
- ✅ Margine top: <b>${bestMargin}</b>
- </div>
+ 🏛️ Epoca più redditizia: <b>${bestEra}</b><br>
+ ⚠️ Canale debole: <b>${worstSite}</b><br><br>
 
- <div class="alert">
- ⚠️ Tipologia debole: <b>${worstType}</b><br>
- ⚠️ Rischio investimento
- </div>
-
- 📌 Strategia:<br>
- Investi in <b>${bestEra}</b> con <b>${bestSite}</b>.
- Riduci acquisti in <b>${worstType}</b>.
+ 📌 Consiglio:
+ investi su <b>${bestEra}</b> (${bestType})
+ ed evita <b>${worstSite}</b>.
 
  `;
 }
 
-function maxKey(o){
+function max(o){
 
- let m=0,k="";
+ let m=-Infinity,k="";
 
  for(let x in o){
   if(o[x]>m){m=o[x];k=x;}
@@ -544,7 +475,7 @@ function maxKey(o){
  return k||"N/D";
 }
 
-function minKey(o){
+function min(o){
 
  let m=Infinity,k="";
 
