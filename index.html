@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>AntiquaVision Master</title>
+<title>AntiquaVision ULTIMATE+</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -19,30 +19,31 @@ body{
 
 header{
  background:#111;
- padding:15px;
+ padding:18px;
  text-align:center;
  color:gold;
- font-size:22px;
+ font-size:24px;
+ font-weight:bold;
 }
 
 .container{
- max-width:1500px;
+ max-width:1800px;
  margin:auto;
  padding:20px;
 }
 
 .card{
  background:#151922;
- padding:20px;
- border-radius:12px;
- margin-bottom:20px;
+ padding:22px;
+ border-radius:14px;
+ margin-bottom:25px;
 }
 
 button{
  background:gold;
  border:none;
- padding:8px 14px;
- border-radius:6px;
+ padding:8px 15px;
+ border-radius:7px;
  font-weight:bold;
  cursor:pointer;
 }
@@ -56,10 +57,15 @@ input,select{
  border:1px solid #333;
 }
 
+select.inline{
+ width:auto;
+ margin-right:10px;
+}
+
 table{
  width:100%;
  border-collapse:collapse;
- font-size:13px;
+ font-size:12px;
 }
 
 th,td{
@@ -71,15 +77,15 @@ th{color:gold}
 
 .grid{
  display:grid;
- grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+ grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
  gap:15px;
 }
 
 .kpi{
  background:#0b0e14;
  border:1px solid #333;
- padding:12px;
- border-radius:8px;
+ padding:14px;
+ border-radius:9px;
  text-align:center;
 }
 
@@ -89,7 +95,7 @@ th{color:gold}
 <body>
 
 <header>
-AntiquaVision MASTER — Business Intelligence
+AntiquaVision ULTIMATE+ — Business Control Center
 </header>
 
 <div class="container">
@@ -98,13 +104,41 @@ AntiquaVision MASTER — Business Intelligence
 
 <div class="card">
 
-<h3>📂 Carica File</h3>
+<h3>📂 Import Dati</h3>
 
-<input type="file" id="fileInput">
+<input type="file" id="fileInternal">
+<button onclick="loadInternal()">Importa Interni</button>
 
-<button onclick="loadFile()">Analizza</button>
+<input type="file" id="fileShop">
+<button onclick="loadShop()">Importa Shop</button>
 
-<div id="result"></div>
+<div id="res"></div>
+
+</div>
+
+<!-- FILTRI -->
+
+<div class="card">
+
+<h3>🎯 Filtri Analisi</h3>
+
+<select id="filterChannel" class="inline" onchange="applyFilters()">
+<option value="">Tutti Canali</option>
+</select>
+
+<select id="filterEra" class="inline" onchange="applyFilters()">
+<option value="">Tutte Epoche</option>
+</select>
+
+<select id="filterCountry" class="inline" onchange="applyFilters()">
+<option value="">Tutti Paesi</option>
+</select>
+
+<select id="filterType" class="inline" onchange="applyFilters()">
+<option value="">Tutte Tipologie</option>
+</select>
+
+<button onclick="resetFilters()">Reset</button>
 
 </div>
 
@@ -112,255 +146,240 @@ AntiquaVision MASTER — Business Intelligence
 
 <div class="card">
 
-<h3>📊 Indicatori</h3>
+<h3>📊 Dashboard</h3>
 
 <div class="grid" id="kpi"></div>
 
 </div>
 
-<!-- GRAFICI BASE -->
+<!-- CHARTS -->
 
-<div class="card">
-<h3>📈 Vendite Mensili</h3>
-<select id="typeSales" onchange="drawSalesChart()">
-<option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
-</select>
-<canvas id="salesChart"></canvas>
-</div>
+<div class="card"><h3>📈 Ricavi per Canale</h3><canvas id="ch1"></canvas></div>
+<div class="card"><h3>💰 Profitto per Epoca</h3><canvas id="ch2"></canvas></div>
+<div class="card"><h3>🌍 Vendite per Paese</h3><canvas id="ch3"></canvas></div>
+<div class="card"><h3>🏺 Tipologie</h3><canvas id="ch4"></canvas></div>
 
-<div class="card">
-<h3>💰 Profitto per Categoria</h3>
-<select id="typeProfit" onchange="drawProfitChart()">
-<option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
-</select>
-<canvas id="profitChart"></canvas>
-</div>
+<!-- INCROCI -->
 
-<div class="card">
-<h3>🌍 Paesi</h3>
-<select id="typeCountry" onchange="drawCountryChart()">
-<option>bar</option><option>pie</option><option>doughnut</option>
-</select>
-<canvas id="countryChart"></canvas>
-</div>
+<div class="card"><h3>🔗 Canale × Epoca (Quantità)</h3><canvas id="ch5"></canvas></div>
+<div class="card"><h3>🔗 Canale × Paese (Vendite)</h3><canvas id="ch6"></canvas></div>
+<div class="card"><h3>🔗 Canale × Tipologia (Profitto)</h3><canvas id="ch7"></canvas></div>
 
-<div class="card">
-<h3>🏛️ Epoche</h3>
-<select id="typeEra" onchange="drawEraChart()">
-<option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
-</select>
-<canvas id="eraChart"></canvas>
-</div>
-
-<!-- NUOVE ANALISI -->
-
-<div class="card">
-<h3>🏺 Tipologie più Vendute</h3>
-<canvas id="typeChart"></canvas>
-</div>
-
-<div class="card">
-<h3>🛒 Acquisti per Epoca</h3>
-<canvas id="buyEraChart"></canvas>
-</div>
-
-<div class="card">
-<h3>📦 Quantità per Categoria</h3>
-<canvas id="qtyChart"></canvas>
-</div>
-
-<div class="card">
-<h3>📉 Perdite per Canale</h3>
-<canvas id="lossChart"></canvas>
-</div>
-
-<div class="card">
-<h3>💎 Profitto per Oggetto</h3>
-<canvas id="objChart"></canvas>
-</div>
+<div class="card"><h3>📦 Quantità per Epoca</h3><canvas id="ch8"></canvas></div>
+<div class="card"><h3>📦 Quantità per Paese</h3><canvas id="ch9"></canvas></div>
 
 <!-- AI -->
 
 <div class="card">
-<h3>🤖 Consulente AI</h3>
+<h3>🤖 AI Strategica</h3>
 <div id="ai"></div>
-</div>
-
-<!-- TABELLA -->
-
-<div class="card">
-<h3>📋 Archivio Completo</h3>
-<table id="table"></table>
 </div>
 
 </div>
 
 <script>
 
-let data=[];
+let internal=[];
+let shop=[];
+let all=[];
+let filtered=[];
+
 let charts={};
+
+/* UTILS */
+
+function num(v){
+ return Number(
+  String(v||"")
+  .replace("€","")
+  .replace("%","")
+  .replace(",",".")
+  .replace(/\s/g,"")
+ )||0;
+}
+
+/* FILE READER */
+
+function readFile(file,cb){
+
+ let ext=file.name.split(".").pop().toLowerCase();
+
+ if(ext==="xlsx"){
+
+  let r=new FileReader();
+
+  r.onload=e=>{
+
+   let a=new Uint8Array(e.target.result);
+   let wb=XLSX.read(a,{type:"array"});
+   let s=wb.Sheets[wb.SheetNames[0]];
+
+   cb(XLSX.utils.sheet_to_json(s));
+  };
+
+  r.readAsArrayBuffer(file);
+
+ }else{
+
+  Papa.parse(file,{
+   header:true,
+   skipEmptyLines:true,
+   complete:r=>cb(r.data)
+  });
+ }
+}
 
 /* LOAD */
 
-function loadFile(){
+function loadInternal(){
 
- let f=fileInput.files[0];
- if(!f) return alert("Seleziona file");
+ let f=fileInternal.files[0];
+ if(!f) return;
 
- let ext=f.name.split(".").pop().toLowerCase();
+ readFile(f,d=>{
 
- if(ext==="xlsx") readExcel(f);
- else readCSV(f);
-}
-
-/* EXCEL */
-
-function readExcel(f){
-
- let r=new FileReader();
-
- r.onload=e=>{
-
-  let a=new Uint8Array(e.target.result);
-
-  let wb=XLSX.read(a,{type:"array"});
-
-  let s=wb.Sheets[wb.SheetNames[0]];
-
-  process(XLSX.utils.sheet_to_json(s));
- };
-
- r.readAsArrayBuffer(f);
-}
-
-/* CSV */
-
-function readCSV(f){
-
- Papa.parse(f,{
-  header:true,
-  skipEmptyLines:true,
-  complete:r=>process(r.data)
- });
-}
-
-/* PROCESS */
-
-function process(rows){
-
- data=[];
-
- rows.forEach(r=>{
-
-  function num(v){
-   return Number(
-    String(v||"")
-    .replace("€","")
-    .replace("%","")
-    .replace(",",".")
-    .replace(/\s/g,"")
-   )||0;
-  }
-
-  data.push({
+  internal=d.map(r=>({
 
    nome:r["Merce venduta"]||"",
    tipo:r["TIPOLOGIA"]||"",
    epoca:r["epoca"]||"",
    paese:r["Nazionalita acquirente"]||"",
-   sito:r["luogo di vendita"]||"",
-   mese:r["MeseNorm"]||"",
+   sito:r["luogo di vendita"]||"Offline",
 
    prezzo:num(r["prezzo di vendita"]),
    costo:num(r["acquisto"]),
-   profitto:num(r["profitto"]),
-   margine:num(r["margine %"])
-  });
+   profitto:num(r["profitto"])
+  }));
+
+  updateAll();
+ });
+}
+
+function loadShop(){
+
+ let f=fileShop.files[0];
+ if(!f) return;
+
+ readFile(f,d=>{
+
+  shop=d.map(r=>({
+
+   nome:r["Product name"]||"",
+   sito:"Online",
+   prezzo:num(r["Total"]||0),
+   costo:0,
+   profitto:num(r["Total"]||0)*0.4
+  }));
+
+  updateAll();
+ });
+}
+
+/* UPDATE */
+
+function updateAll(){
+
+ all=[...internal,...shop];
+ filtered=[...all];
+
+ res.innerHTML="✔️ Record: "+all.length;
+
+ buildFilters();
+ render();
+}
+
+/* FILTERS */
+
+function buildFilters(){
+
+ fill("filterChannel","sito");
+ fill("filterEra","epoca");
+ fill("filterCountry","paese");
+ fill("filterType","tipo");
+}
+
+function fill(id,key){
+
+ let s=document.getElementById(id);
+
+ let set=new Set();
+
+ internal.forEach(x=>{
+  if(x[key]) set.add(x[key]);
  });
 
- result.innerHTML="✔️ "+data.length+" record caricati";
+ s.innerHTML="<option value=''>Tutti</option>";
 
- renderAll();
+ set.forEach(v=>{
+  s.innerHTML+=`<option>${v}</option>`;
+ });
 }
 
-/* MAIN */
+function applyFilters(){
 
-function renderAll(){
+ filtered=all.filter(x=>{
 
- renderKPI();
- renderTable();
+  if(filterChannel.value && x.sito!==filterChannel.value) return false;
+  if(filterEra.value && x.epoca!==filterEra.value) return false;
+  if(filterCountry.value && x.paese!==filterCountry.value) return false;
+  if(filterType.value && x.tipo!==filterType.value) return false;
 
- drawSalesChart();
- drawProfitChart();
- drawCountryChart();
- drawEraChart();
-
- drawTypeChart();
- drawBuyEraChart();
- drawQtyChart();
- drawLossChart();
- drawObjChart();
-
- renderAI();
-}
-
-/* KPI */
-
-function renderKPI(){
-
- let r=0,c=0,p=0;
-
- data.forEach(x=>{
-  r+=x.prezzo;
-  c+=x.costo;
-  p+=x.profitto;
+  return true;
  });
 
- let roi=(p/c*100)||0;
-
- kpi.innerHTML=`
-
- <div class="kpi"><b>${r.toFixed(0)}€</b><br>Entrate</div>
- <div class="kpi"><b>${c.toFixed(0)}€</b><br>Costi</div>
- <div class="kpi"><b>${p.toFixed(0)}€</b><br>Profitto</div>
- <div class="kpi"><b>${roi.toFixed(1)}%</b><br>ROI</div>
- <div class="kpi"><b>${data.length}</b><br>Oggetti</div>
-
- `;
+ render();
 }
 
-/* UTILS */
+function resetFilters(){
 
-function group(k,v){
+ filterChannel.value="";
+ filterEra.value="";
+ filterCountry.value="";
+ filterType.value="";
+
+ filtered=[...all];
+
+ render();
+}
+
+/* GROUP */
+
+function group(arr,k,v){
 
  let o={};
 
- data.forEach(x=>{
+ arr.forEach(x=>{
   if(!x[k]) return;
-  o[x[k]]=(o[x[k]]||0)+x[v];
+  o[x[k]]=(o[x[k]]||0)+(v?x[v]:1);
  });
 
  return o;
 }
 
-function count(k){
+function group2(arr,k1,k2){
 
  let o={};
 
- data.forEach(x=>{
-  if(!x[k]) return;
-  o[x[k]]=(o[x[k]]||0)+1;
+ arr.forEach(x=>{
+
+  if(!x[k1]||!x[k2]) return;
+
+  let key=x[k1]+" / "+x[k2];
+
+  o[key]=(o[key]||0)+1;
  });
 
  return o;
 }
 
-function draw(id,ref,type,label,obj){
+/* DRAW */
 
- if(charts[ref]) charts[ref].destroy();
+function draw(id,label,obj){
 
- charts[ref]=new Chart(document.getElementById(id),{
-  type:type,
+ if(charts[id]) charts[id].destroy();
+
+ charts[id]=new Chart(document.getElementById(id),{
+  type:"bar",
   data:{
    labels:Object.keys(obj),
    datasets:[{
@@ -372,115 +391,87 @@ function draw(id,ref,type,label,obj){
  });
 }
 
-/* BASE */
+/* RENDER */
 
-function drawSalesChart(){
- draw("salesChart","sales",typeSales.value,"Vendite",group("mese","prezzo"));
+function render(){
+
+ if(!filtered.length) return;
+
+ renderKPI();
+ drawCharts();
+ renderAI();
 }
 
-function drawProfitChart(){
- draw("profitChart","profit",typeProfit.value,"Profitto",group("tipo","profitto"));
-}
+/* KPI */
 
-function drawCountryChart(){
- draw("countryChart","country",typeCountry.value,"Paesi",group("paese","prezzo"));
-}
+function renderKPI(){
 
-function drawEraChart(){
- draw("eraChart","era",typeEra.value,"Epoche",group("epoca","profitto"));
-}
+ let r=0,c=0,p=0;
 
-/* EXTRA */
-
-function drawTypeChart(){
- draw("typeChart","type","bar","Tipologie",count("tipo"));
-}
-
-function drawBuyEraChart(){
- draw("buyEraChart","buyEra","bar","Acquisti Epoca",group("epoca","costo"));
-}
-
-function drawQtyChart(){
- draw("qtyChart","qty","bar","Quantità",count("nome"));
-}
-
-function drawLossChart(){
-
- let o={};
-
- data.forEach(x=>{
-  if(x.profitto<0){
-   o[x.sito]=(o[x.sito]||0)+x.profitto;
-  }
+ filtered.forEach(x=>{
+  r+=x.prezzo;
+  c+=x.costo;
+  p+=x.profitto;
  });
 
- draw("lossChart","loss","bar","Perdite",o);
+ let roi=(p/c*100)||0;
+
+ kpi.innerHTML=`
+
+ <div class="kpi"><b>${r.toFixed(0)}€</b><br>Ricavi</div>
+ <div class="kpi"><b>${c.toFixed(0)}€</b><br>Costi</div>
+ <div class="kpi"><b>${p.toFixed(0)}€</b><br>Profitto</div>
+ <div class="kpi"><b>${roi.toFixed(1)}%</b><br>ROI</div>
+ <div class="kpi"><b>${filtered.length}</b><br>Vendite</div>
+
+ `;
 }
 
-function drawObjChart(){
- draw("objChart","obj","bar","Profitto Oggetti",group("nome","profitto"));
-}
+/* CHARTS */
 
-/* TABLE */
+function drawCharts(){
 
-function renderTable(){
+ draw("ch1","Ricavi",group(filtered,"sito","prezzo"));
+ draw("ch2","Profitto",group(filtered,"epoca","profitto"));
+ draw("ch3","Paesi",group(filtered,"paese","prezzo"));
+ draw("ch4","Tipologie",group(filtered,"tipo","profitto"));
 
- let h="<tr><th>Nome</th><th>Tipo</th><th>Mese</th><th>Prezzo</th><th>Profitto</th><th>Epoca</th></tr>";
+ draw("ch5","Canale/Epoca",group2(filtered,"sito","epoca"));
+ draw("ch6","Canale/Paese",group2(filtered,"sito","paese"));
+ draw("ch7","Canale/Tipo",group2(filtered,"sito","tipo"));
 
- data.forEach(x=>{
-
-  h+=`
-  <tr>
-   <td>${x.nome}</td>
-   <td>${x.tipo}</td>
-   <td>${x.mese}</td>
-   <td>${x.prezzo}</td>
-   <td>${x.profitto}</td>
-   <td>${x.epoca}</td>
-  </tr>`;
- });
-
- table.innerHTML=h;
+ draw("ch8","Epoche",group(filtered,"epoca"));
+ draw("ch9","Paesi",group(filtered,"paese"));
 }
 
 /* AI */
 
 function renderAI(){
 
- let bestType=max(group("tipo","profitto"));
- let bestEra=max(group("epoca","profitto"));
- let worstSite=min(group("sito","profitto"));
+ let bestChannel=max(group(filtered,"sito","profitto"));
+ let bestEra=max(group(filtered,"epoca","profitto"));
+ let bestType=max(group(filtered,"tipo","profitto"));
 
  ai.innerHTML=`
 
- ✅ Miglior tipologia: <b>${bestType}</b><br>
- 🏛️ Epoca più redditizia: <b>${bestEra}</b><br>
- ⚠️ Canale debole: <b>${worstSite}</b><br><br>
+ ✅ Miglior canale: <b>${bestChannel}</b><br>
+ 🏛️ Miglior epoca: <b>${bestEra}</b><br>
+ 🏺 Miglior tipologia: <b>${bestType}</b><br><br>
 
- 📌 Consiglio:
- investi su <b>${bestEra}</b> (${bestType})
- ed evita <b>${worstSite}</b>.
+ 📌 Strategia:
+ investi su <b>${bestEra}</b>,
+ potenzia <b>${bestChannel}</b>,
+ compra più <b>${bestType}</b>.
 
  `;
 }
 
 function max(o){
 
- let m=-Infinity,k="";
+ let m=-1e9,k="";
 
  for(let x in o){
   if(o[x]>m){m=o[x];k=x;}
- }
-
- return k||"N/D";
-}
-
-function min(o){
-
- let m=Infinity,k="";
-
- for(let x in o){
-  if(o[x]<m){m=o[x];k=x;}
  }
 
  return k||"N/D";
