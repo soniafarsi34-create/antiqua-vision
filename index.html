@@ -2,14 +2,12 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>AntiquaVision ENTERPRISE 360</title>
+<title>AntiquaVision Ultimate Enterprise</title>
 
-<!-- LIBRARIES -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
-<!-- STYLE -->
 <style>
 
 body{
@@ -21,10 +19,10 @@ body{
 
 header{
  background:#111;
- padding:18px;
+ padding:20px;
  text-align:center;
  color:gold;
- font-size:24px;
+ font-size:26px;
  font-weight:bold;
 }
 
@@ -78,7 +76,7 @@ select.inline{
  text-align:center;
 }
 
-.hflex{
+.flex{
  display:flex;
  justify-content:space-between;
  align-items:center;
@@ -95,7 +93,7 @@ select.inline{
 <body>
 
 <header>
-AntiquaVision ENTERPRISE 360 — Business Intelligence
+AntiquaVision — Ultimate Business Intelligence
 </header>
 
 <div class="container">
@@ -124,7 +122,7 @@ AntiquaVision ENTERPRISE 360 — Business Intelligence
 
 <div class="card">
 
-<h3>🎯 Filtri Globali</h3>
+<h3>🎯 Filtri</h3>
 
 <select id="filterChannel" class="inline" onchange="applyFilters()"></select>
 <select id="filterEra" class="inline" onchange="applyFilters()"></select>
@@ -139,7 +137,7 @@ AntiquaVision ENTERPRISE 360 — Business Intelligence
 
 <div class="card">
 
-<h3>📊 Dashboard Principale</h3>
+<h3>📊 Dashboard</h3>
 
 <div class="grid" id="kpi"></div>
 
@@ -148,7 +146,7 @@ AntiquaVision ENTERPRISE 360 — Business Intelligence
 <!-- CHARTS -->
 
 <div class="card">
-<div class="hflex">
+<div class="flex">
 <h3>📈 Ricavi per Canale</h3>
 <select id="t1" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
@@ -158,7 +156,7 @@ AntiquaVision ENTERPRISE 360 — Business Intelligence
 </div>
 
 <div class="card">
-<div class="hflex">
+<div class="flex">
 <h3>💰 Profitto per Epoca</h3>
 <select id="t2" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
@@ -168,7 +166,7 @@ AntiquaVision ENTERPRISE 360 — Business Intelligence
 </div>
 
 <div class="card">
-<div class="hflex">
+<div class="flex">
 <h3>🌍 Vendite per Paese</h3>
 <select id="t3" onchange="drawCharts()">
 <option>bar</option><option>pie</option><option>doughnut</option>
@@ -178,7 +176,7 @@ AntiquaVision ENTERPRISE 360 — Business Intelligence
 </div>
 
 <div class="card">
-<div class="hflex">
+<div class="flex">
 <h3>🏺 Profitto per Tipologia</h3>
 <select id="t4" onchange="drawCharts()">
 <option>bar</option><option>pie</option><option>doughnut</option>
@@ -188,7 +186,7 @@ AntiquaVision ENTERPRISE 360 — Business Intelligence
 </div>
 
 <div class="card">
-<div class="hflex">
+<div class="flex">
 <h3>💎 Prezzo Medio Epoca × Canale</h3>
 <select id="t5" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>pie</option>
@@ -214,14 +212,12 @@ AntiquaVision ENTERPRISE 360 — Business Intelligence
 <h3>💬 Domande Business</h3>
 
 <div class="small">
-
-Esempi:
-• Cosa comprano gli americani  
-• Paese più profittevole  
-• Dove perdo soldi  
-• Miglior canale  
-• Miglior epoca  
-
+Esempi:<br>
+• Cosa comprano gli americani<br>
+• Paese più profittevole<br>
+• Dove perdo soldi<br>
+• Miglior canale<br>
+• Miglior epoca
 </div>
 
 <input id="question">
@@ -244,11 +240,13 @@ let charts={};
 /* ================= UTILS ================= */
 
 function num(v){
- return Number(String(v||"")
- .replace("€","")
- .replace("%","")
- .replace(",",".")
- .replace(/\s/g,""))||0;
+ return Number(
+  String(v||"")
+  .replace("€","")
+  .replace("%","")
+  .replace(",",".")
+  .replace(/\s/g,"")
+ )||0;
 }
 
 /* ================= FILE ================= */
@@ -295,10 +293,12 @@ function loadInternal(){
    epoca:r["epoca"]||"",
    paese:r["Nazionalita acquirente"]||"",
    sito:r["luogo di vendita"]||"Offline",
+   mese:r["MeseNorm"]||"",
 
    prezzo:num(r["prezzo di vendita"]),
    costo:num(r["acquisto"]),
-   profitto:num(r["profitto"])
+   profitto:num(r["profitto"]),
+   margine:num(r["margine %"])
 
   }));
 
@@ -320,7 +320,8 @@ function loadShop(){
 
    prezzo:num(r["Total"]||0),
    costo:0,
-   profitto:num(r["Total"]||0)*0.4
+   profitto:num(r["Total"]||0)*0.4,
+   margine:40
 
   }));
 
@@ -435,6 +436,7 @@ function render(){
  renderKPI();
  drawCharts();
  renderAI();
+ renderEnterprise();
 }
 
 /* ================= KPI ================= */
@@ -511,14 +513,61 @@ function renderAI(){
 
  ✅ Miglior canale: <b>${bestC}</b><br>
  🏛️ Miglior epoca: <b>${bestE}</b><br>
- 🏺 Miglior tipologia: <b>${bestT}</b><br><br>
-
- 📌 Strategia:
- punta su ${bestE},
- spingi ${bestC},
- compra ${bestT}.
+ 🏺 Miglior tipologia: <b>${bestT}</b><br>
 
  `;
+}
+
+/* ================= ENTERPRISE ================= */
+
+function renderEnterprise(){
+
+ let losses = filtered.filter(x=>x.profitto<0).length;
+ let trend = forecast();
+ let budget = planBudget();
+ let risk = riskIndex();
+
+ ai.innerHTML += `
+
+ <hr>
+
+ ❌ Vendite in perdita: <b>${losses}</b><br>
+ 📈 Trend: <b>${trend}</b><br>
+ 💸 Budget consigliato: <b>${budget}€</b><br>
+ 🚨 Rischio: <b>${risk}</b><br>
+
+ `;
+}
+
+function forecast(){
+
+ let m=group(filtered,"mese","prezzo");
+ let v=Object.values(m);
+
+ if(v.length<2) return "Insufficiente";
+
+ return v[v.length-1]>v[0]?"Crescita":"Calo";
+}
+
+function planBudget(){
+
+ let p=0;
+
+ filtered.forEach(x=>p+=x.profitto);
+
+ return Math.round(p*0.4);
+}
+
+function riskIndex(){
+
+ let l=filtered.filter(x=>x.profitto<0).length;
+
+ let r=l/filtered.length;
+
+ if(r<0.1) return "Basso";
+ if(r<0.25) return "Medio";
+
+ return "Alto";
 }
 
 /* ================= Q&A ================= */
@@ -526,35 +575,25 @@ function renderAI(){
 function askQuestion(){
 
  let q=question.value.toLowerCase();
+ let res="Nessun dato.";
 
- if(!q) return;
-
- let res="Non ho dati sufficienti.";
-
- if(q.includes("america")||q.includes("usa")){
-
-  let u=filtered.filter(x=>x.paese.toLowerCase().includes("usa"));
-
-  res="🇺🇸 Comprano: "+max(group(u,"tipo","prezzo"));
+ if(q.includes("usa")||q.includes("america")){
+  res="🇺🇸 Comprano: "+max(group(filtered,"tipo","prezzo"));
  }
 
  if(q.includes("paese")&&q.includes("profit")){
-
   res="🌍 Miglior paese: "+max(group(filtered,"paese","profitto"));
  }
 
  if(q.includes("perdo")){
-
   res="⚠️ Perdi su: "+min(group(filtered,"sito","profitto"));
  }
 
  if(q.includes("canale")){
-
   res="🏆 Miglior canale: "+max(group(filtered,"sito","profitto"));
  }
 
  if(q.includes("epoca")){
-
   res="🏛️ Miglior epoca: "+max(group(filtered,"epoca","profitto"));
  }
 
