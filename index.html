@@ -2,12 +2,14 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>AntiquaVision SUPREME</title>
+<title>AntiquaVision ENTERPRISE 360</title>
 
+<!-- LIBRARIES -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1p/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
+<!-- STYLE -->
 <style>
 
 body{
@@ -62,19 +64,6 @@ select.inline{
  margin-right:10px;
 }
 
-table{
- width:100%;
- border-collapse:collapse;
- font-size:12px;
-}
-
-th,td{
- border-bottom:1px solid #333;
- padding:6px;
-}
-
-th{color:gold}
-
 .grid{
  display:grid;
  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
@@ -89,13 +78,24 @@ th{color:gold}
  text-align:center;
 }
 
+.hflex{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+}
+
+.small{
+ font-size:13px;
+ color:#aaa;
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-AntiquaVision SUPREME — Business Intelligence
+AntiquaVision ENTERPRISE 360 — Business Intelligence
 </header>
 
 <div class="container">
@@ -106,11 +106,15 @@ AntiquaVision SUPREME — Business Intelligence
 
 <h3>📂 Import Dati</h3>
 
+<b>Dati Interni</b>
 <input type="file" id="fileInternal">
-<button onclick="loadInternal()">Importa Interni</button>
+<button onclick="loadInternal()">Importa</button>
 
+<br><br>
+
+<b>Dati Shop</b>
 <input type="file" id="fileShop">
-<button onclick="loadShop()">Importa Shop</button>
+<button onclick="loadShop()">Importa</button>
 
 <div id="res"></div>
 
@@ -120,7 +124,7 @@ AntiquaVision SUPREME — Business Intelligence
 
 <div class="card">
 
-<h3>🎯 Filtri</h3>
+<h3>🎯 Filtri Globali</h3>
 
 <select id="filterChannel" class="inline" onchange="applyFilters()"></select>
 <select id="filterEra" class="inline" onchange="applyFilters()"></select>
@@ -135,33 +139,72 @@ AntiquaVision SUPREME — Business Intelligence
 
 <div class="card">
 
-<h3>📊 Dashboard</h3>
+<h3>📊 Dashboard Principale</h3>
 
 <div class="grid" id="kpi"></div>
 
 </div>
 
-<!-- GRAFICI -->
+<!-- CHARTS -->
 
-<div class="card"><h3>📈 Ricavi per Canale</h3><canvas id="ch1"></canvas></div>
-<div class="card"><h3>💰 Profitto per Epoca</h3><canvas id="ch2"></canvas></div>
-<div class="card"><h3>🌍 Vendite per Paese</h3><canvas id="ch3"></canvas></div>
-<div class="card"><h3>🏺 Tipologie</h3><canvas id="ch4"></canvas></div>
+<div class="card">
+<div class="hflex">
+<h3>📈 Ricavi per Canale</h3>
+<select id="t1" onchange="drawCharts()">
+<option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
+</select>
+</div>
+<canvas id="c1"></canvas>
+</div>
 
-<div class="card"><h3>🔗 Canale × Epoca</h3><canvas id="ch5"></canvas></div>
-<div class="card"><h3>🔗 Canale × Paese</h3><canvas id="ch6"></canvas></div>
-<div class="card"><h3>🔗 Canale × Tipologia</h3><canvas id="ch7"></canvas></div>
+<div class="card">
+<div class="hflex">
+<h3>💰 Profitto per Epoca</h3>
+<select id="t2" onchange="drawCharts()">
+<option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
+</select>
+</div>
+<canvas id="c2"></canvas>
+</div>
 
-<div class="card"><h3>📦 Quantità per Epoca</h3><canvas id="ch8"></canvas></div>
-<div class="card"><h3>📦 Quantità per Paese</h3><canvas id="ch9"></canvas></div>
+<div class="card">
+<div class="hflex">
+<h3>🌍 Vendite per Paese</h3>
+<select id="t3" onchange="drawCharts()">
+<option>bar</option><option>pie</option><option>doughnut</option>
+</select>
+</div>
+<canvas id="c3"></canvas>
+</div>
 
-<div class="card"><h3>💎 Prezzo Medio Epoca × Canale</h3><canvas id="ch10"></canvas></div>
+<div class="card">
+<div class="hflex">
+<h3>🏺 Profitto per Tipologia</h3>
+<select id="t4" onchange="drawCharts()">
+<option>bar</option><option>pie</option><option>doughnut</option>
+</select>
+</div>
+<canvas id="c4"></canvas>
+</div>
+
+<div class="card">
+<div class="hflex">
+<h3>💎 Prezzo Medio Epoca × Canale</h3>
+<select id="t5" onchange="drawCharts()">
+<option>bar</option><option>line</option><option>pie</option>
+</select>
+</div>
+<canvas id="c5"></canvas>
+</div>
 
 <!-- AI -->
 
 <div class="card">
-<h3>🤖 AI Strategica</h3>
+
+<h3>🤖 Consulente AI</h3>
+
 <div id="ai"></div>
+
 </div>
 
 <!-- Q&A -->
@@ -170,7 +213,18 @@ AntiquaVision SUPREME — Business Intelligence
 
 <h3>💬 Domande Business</h3>
 
-<input id="question" placeholder="Es: Cosa comprano gli americani?">
+<div class="small">
+
+Esempi:
+• Cosa comprano gli americani  
+• Paese più profittevole  
+• Dove perdo soldi  
+• Miglior canale  
+• Miglior epoca  
+
+</div>
+
+<input id="question">
 
 <button onclick="askQuestion()">Chiedi</button>
 
@@ -182,25 +236,22 @@ AntiquaVision SUPREME — Business Intelligence
 
 <script>
 
-let internal=[];
-let shop=[];
-let all=[];
-let filtered=[];
+/* ================= DATA ================= */
+
+let internal=[],shop=[],all=[],filtered=[];
 let charts={};
 
-/* UTILS */
+/* ================= UTILS ================= */
 
 function num(v){
- return Number(
-  String(v||"")
-  .replace("€","")
-  .replace("%","")
-  .replace(",",".")
-  .replace(/\s/g,"")
- )||0;
+ return Number(String(v||"")
+ .replace("€","")
+ .replace("%","")
+ .replace(",",".")
+ .replace(/\s/g,""))||0;
 }
 
-/* FILE */
+/* ================= FILE ================= */
 
 function readFile(file,cb){
 
@@ -211,8 +262,7 @@ function readFile(file,cb){
   let r=new FileReader();
 
   r.onload=e=>{
-   let a=new Uint8Array(e.target.result);
-   let wb=XLSX.read(a,{type:"array"});
+   let wb=XLSX.read(new Uint8Array(e.target.result),{type:"array"});
    let s=wb.Sheets[wb.SheetNames[0]];
    cb(XLSX.utils.sheet_to_json(s));
   };
@@ -229,7 +279,7 @@ function readFile(file,cb){
  }
 }
 
-/* LOAD */
+/* ================= LOAD ================= */
 
 function loadInternal(){
 
@@ -252,7 +302,7 @@ function loadInternal(){
 
   }));
 
-  updateAll();
+  update();
  });
 }
 
@@ -267,18 +317,20 @@ function loadShop(){
 
    nome:r["Product name"]||"",
    sito:"Online",
+
    prezzo:num(r["Total"]||0),
    costo:0,
    profitto:num(r["Total"]||0)*0.4
+
   }));
 
-  updateAll();
+  update();
  });
 }
 
-/* UPDATE */
+/* ================= UPDATE ================= */
 
-function updateAll(){
+function update(){
 
  all=[...internal,...shop];
  filtered=[...all];
@@ -289,7 +341,7 @@ function updateAll(){
  render();
 }
 
-/* FILTERS */
+/* ================= FILTERS ================= */
 
 function buildFilters(){
 
@@ -341,7 +393,7 @@ function resetFilters(){
  render();
 }
 
-/* GROUP */
+/* ================= GROUP ================= */
 
 function group(arr,k,v){
 
@@ -355,30 +407,14 @@ function group(arr,k,v){
  return o;
 }
 
-function group2(arr,k1,k2){
+/* ================= DRAW ================= */
 
- let o={};
-
- arr.forEach(x=>{
-
-  if(!x[k1]||!x[k2]) return;
-
-  let key=x[k1]+" / "+x[k2];
-
-  o[key]=(o[key]||0)+1;
- });
-
- return o;
-}
-
-/* DRAW */
-
-function draw(id,label,obj){
+function draw(id,label,obj,type){
 
  if(charts[id]) charts[id].destroy();
 
  charts[id]=new Chart(document.getElementById(id),{
-  type:"bar",
+  type:type,
   data:{
    labels:Object.keys(obj),
    datasets:[{
@@ -390,7 +426,7 @@ function draw(id,label,obj){
  });
 }
 
-/* RENDER */
+/* ================= RENDER ================= */
 
 function render(){
 
@@ -401,7 +437,7 @@ function render(){
  renderAI();
 }
 
-/* KPI */
+/* ================= KPI ================= */
 
 function renderKPI(){
 
@@ -426,32 +462,25 @@ function renderKPI(){
  `;
 }
 
-/* CHARTS */
+/* ================= CHARTS ================= */
 
 function drawCharts(){
 
- draw("ch1","Ricavi",group(filtered,"sito","prezzo"));
- draw("ch2","Profitto",group(filtered,"epoca","profitto"));
- draw("ch3","Paesi",group(filtered,"paese","prezzo"));
- draw("ch4","Tipologie",group(filtered,"tipo","profitto"));
+ draw("c1","Ricavi",group(filtered,"sito","prezzo"),t1.value);
+ draw("c2","Profitto",group(filtered,"epoca","profitto"),t2.value);
+ draw("c3","Paesi",group(filtered,"paese","prezzo"),t3.value);
+ draw("c4","Tipologie",group(filtered,"tipo","profitto"),t4.value);
 
- draw("ch5","Canale/Epoca",group2(filtered,"sito","epoca"));
- draw("ch6","Canale/Paese",group2(filtered,"sito","paese"));
- draw("ch7","Canale/Tipo",group2(filtered,"sito","tipo"));
-
- draw("ch8","Epoche",group(filtered,"epoca"));
- draw("ch9","Paesi",group(filtered,"paese"));
-
- drawAvgPrice();
+ drawAvg();
 }
 
-function drawAvgPrice(){
+function drawAvg(){
 
  let map={};
 
  filtered.forEach(x=>{
 
-  if(!x.epoca||!x.sito||!x.prezzo) return;
+  if(!x.epoca||!x.sito) return;
 
   let k=x.sito+" / "+x.epoca;
 
@@ -461,38 +490,38 @@ function drawAvgPrice(){
   map[k].c++;
  });
 
- let res={};
+ let r={};
 
  for(let k in map){
-  res[k]=map[k].t/map[k].c;
+  r[k]=map[k].t/map[k].c;
  }
 
- draw("ch10","Prezzo Medio",res);
+ draw("c5","Prezzo Medio",r,t5.value);
 }
 
-/* AI */
+/* ================= AI ================= */
 
 function renderAI(){
 
- let bestChannel=max(group(filtered,"sito","profitto"));
- let bestEra=max(group(filtered,"epoca","profitto"));
- let bestType=max(group(filtered,"tipo","profitto"));
+ let bestC=max(group(filtered,"sito","profitto"));
+ let bestE=max(group(filtered,"epoca","profitto"));
+ let bestT=max(group(filtered,"tipo","profitto"));
 
  ai.innerHTML=`
 
- ✅ Miglior canale: <b>${bestChannel}</b><br>
- 🏛️ Miglior epoca: <b>${bestEra}</b><br>
- 🏺 Miglior tipologia: <b>${bestType}</b><br><br>
+ ✅ Miglior canale: <b>${bestC}</b><br>
+ 🏛️ Miglior epoca: <b>${bestE}</b><br>
+ 🏺 Miglior tipologia: <b>${bestT}</b><br><br>
 
  📌 Strategia:
- punta su ${bestEra},
- spingi ${bestChannel},
- compra ${bestType}.
+ punta su ${bestE},
+ spingi ${bestC},
+ compra ${bestT}.
 
  `;
 }
 
-/* Q&A */
+/* ================= Q&A ================= */
 
 function askQuestion(){
 
@@ -500,39 +529,39 @@ function askQuestion(){
 
  if(!q) return;
 
- let res="Domanda non riconosciuta.";
+ let res="Non ho dati sufficienti.";
 
- if(q.includes("american")||q.includes("usa")){
+ if(q.includes("america")||q.includes("usa")){
 
-  let usa=filtered.filter(x=>
-   x.paese.toLowerCase().includes("usa")||
-   x.paese.toLowerCase().includes("america")
-  );
+  let u=filtered.filter(x=>x.paese.toLowerCase().includes("usa"));
 
-  let t=group(usa,"tipo","prezzo");
-  let best=max(t);
-
-  res="🇺🇸 Gli americani comprano soprattutto: "+best;
+  res="🇺🇸 Comprano: "+max(group(u,"tipo","prezzo"));
  }
 
  if(q.includes("paese")&&q.includes("profit")){
 
-  let p=group(filtered,"paese","profitto");
-  let best=max(p);
-
-  res="🌍 Il paese più redditizio è: "+best;
+  res="🌍 Miglior paese: "+max(group(filtered,"paese","profitto"));
  }
 
- if(q.includes("dove")&&q.includes("perdo")){
+ if(q.includes("perdo")){
 
-  let s=group(filtered,"sito","profitto");
-  let w=min(s);
+  res="⚠️ Perdi su: "+min(group(filtered,"sito","profitto"));
+ }
 
-  res="⚠️ Perdi soprattutto su: "+w;
+ if(q.includes("canale")){
+
+  res="🏆 Miglior canale: "+max(group(filtered,"sito","profitto"));
+ }
+
+ if(q.includes("epoca")){
+
+  res="🏛️ Miglior epoca: "+max(group(filtered,"epoca","profitto"));
  }
 
  answer.innerHTML=res;
 }
+
+/* ================= MIN MAX ================= */
 
 function max(o){
 
