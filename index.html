@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>AntiquaVision - Sonia</title>
+
+<!-- Librerie -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<style>
+
+body{
+ margin:0;
+ background:#0b0e14;
+ color:#eee;
+ font-family:Arial;
+}
+
+header{
+ background:#111;
+ padding:15px;
+ text-align:center;
+ color:gold;
+ font-size:22px;
+}
+
+.container{
+ max-width:1200px;
+ margin:auto;
+ padding:20px;
+}
+
+.card{
+ background:#151922;
+ padding:20px;
+ border-radius:12px;
+ margin-bottom:20px;
+}
+
+button{
+ background:gold;
+ border:none;
+ padding:8px 14px;
+ border-radius:6px;
+ font-weight:bold;
+ cursor:pointer;
+}
+
+input,select{
+ width:100%;
+ padding:7px;
+ margin:5px 0;
+ background:#0b0e14;
+ color:white;
+ border:1px solid #333;
+}
+
+table{
+ width:100%;
+ border-collapse:collapse;
+ font-size:13px;
+}
+
+th,td{
+ border-bottom:1px solid #333;
+ padding:6px;
+}
+
+th{color:gold}
+
+</style>
+</head>
+
+<body>
+
+<header>
+AntiquaVision — Analisi Vendite
+</header>
+
+<div class="container">
+
+<!-- IMPORT -->
+<div class="card">
+
+<h3>📂 Carica Excel / CSV</h3>
+
+<input type="file" id="fileInput">
+
+<button onclick="loadFile()">Analizza File</button>
+
+<div id="result"></div>
+
+</div>
+
+<!-- KPI -->
+<div class="card">
+
+<h3>📊 Riepilogo</h3>
+
+<div id="kpi"></div>
+
+</div>
+
+<!-- GRAFICO -->
+<div class="card">
+
+<h3>📈 Grafico Profitto</h3>
+
+<select id="chartType" onchange="drawChart()">
+<option value="bar">Barre</option>
+<option value="line">Linea</option>
+<option value="pie">Torta</option>
+</select>
+
+<canvas id="chart"></canvas>
+
+</div>
+
+<!-- TABELLA -->
+<div class="card">
+
+<h3>📋 Dati</h3>
+
+<table id="table"></table>
+
+</div>
+
+</div>
+
+<script>
+
+let records=[];
+let chart=null;
+
+/* CARICA FILE */
+
+function loadFile(){
+
+ let file=fileInput.files[0];
+
+ if(!file){
+  alert("Seleziona un file");
+  return;
+ }
+
+ let ext=file.name.split(".").pop().toLowerCase();
+
+ if(ext==="xlsx"){
+  readExcel(file);
+ }
+ else{
+  readCSV(file);
+ }
+
+}
+
+/* EXCEL */
+
+function readExcel(file){
+
+ let reader=new FileReader();
+
+ reader.onload=e=>{
+
+  let data=new Uint8Array(e.target.result);
+
+  let wb=XLSX.read(data,{type:"array"});
+
+  let sheet=wb.Sheets[wb.SheetNames[0]];
+
+  let json=XLSX.utils.sheet_to_json(sheet);
+
+  process(json);
+ };
+
+ reader.readAsArrayBuffer(file);
+}
+
+/* CSV */
+
+function readCSV(file){
+
+ Papa.parse(file,{
+  header:true,
+  skipEmptyLines:true,
+  complete:r=>{
+   process(r.data);
+  }
+ });
+}
+
+/* PROCESSA DATI */
+
+function process(rows){
+
+ records=[];
+
+ rows.forEach(r=>{
+
+  function num(v){
+   return Number(
+    String(v||"")
+    .replace("€","")
+    .replace("%","")
+    .replace(",",".")
+    .replace(/\s/g,"")
+   )||0;
+  }
+
+  records.push({
+
+   nome: r["Merce venduta"] || "",
+   luogo: r["luogo di vendita"] || "",
+   epoca: r["epoca"] || "",
+
+   prezzo: num(r["prezzo di vendita"]),
+   costo: num(r["acquisto"]),
+   profitto: num(r["profitto"]),
+
+   mese: r["MeseNorm"] || ""
+
+  });
+
+ });
+
+ result.innerHTML=`✔️ ${records.length} righe importate`;
+
+ render();
+
+}
+
+/* RENDER */
+
+function render(){
+
+ renderKPI();
+ renderTable();
+ drawChart();
+}
+
+/* KPI */
+
+function renderKPI(){
+
+ let ricavi=0;
+ let costi=0;
+ let prof=0;
+
+ records.forEach(x=>{
+  ricavi+=x.prezzo;
+  costi+=x.costo;
+  prof+=x.profitto;
+ });
+
+ let avg=prof/(records.length||1);
+
+ kpi.innerHTML=`
+
+ Entrate: <b>${ricavi.toFixed(0)}€</b><br>
+ Costi: <b>${costi.toFixed(0)}€</b><br>
+ Profitto: <b>${prof.toFixed(0)}€</b><br>
+ Media per vendita: <b>${avg.toFixed(0)}€</b>
+
+ `;
+}
+
+/* TABELLA */
+
+function renderTable(){
+
+ let h="<tr><th>Nome</th><th>Luogo</th><th>Prezzo</th><th>Profitto</th><th>Epoca</th></tr>";
+
+ records.forEach(x=>{
+
+  h+=`
+  <tr>
+   <td>${x.nome}</td>
+   <td>${x.luogo}</td>
+   <td>${x.prezzo}</td>
+   <td>${x.profitto}</td>
+   <td>${x.epoca}</td>
+  </tr>
+  `;
+
+ });
+
+ table.innerHTML=h;
+}
+
+/* GRAFICO */
+
+function drawChart(){
+
+ let type=chartType.value;
+
+ let mesi={};
+
+ records.forEach(x=>{
+
+  if(!x.mese) return;
+
+  mesi[x.mese]=(mesi[x.mese]||0)+x.profitto;
+
+ });
+
+ let labels=Object.keys(mesi);
+ let values=Object.values(mesi);
+
+ if(chart) chart.destroy();
+
+ chart=new Chart(document.getElementById("chart"),{
+
+  type:type,
+
+  data:{
+   labels:labels,
+   datasets:[{
+    label:"Profitto mensile",
+    data:values,
+    backgroundColor:"gold"
+   }]
+  }
+
+ });
+
+}
+
+</script>
+
+</body>
+</html>
