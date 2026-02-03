@@ -9,127 +9,305 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
-body{margin:0;background:#0b0e14;color:#eee;font-family:Arial}
-header{background:#111;padding:15px;text-align:center;color:gold;font-size:22px}
-.container{max-width:1400px;margin:auto;padding:20px}
-.card{background:#151922;padding:20px;border-radius:12px;margin-bottom:20px}
-button{background:gold;border:none;padding:8px 14px;border-radius:6px;font-weight:bold;cursor:pointer}
-input,select{width:100%;padding:7px;margin:5px 0;background:#0b0e14;color:white;border:1px solid #333}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{border-bottom:1px solid #333;padding:6px}
+
+body{
+ margin:0;
+ background:#0b0e14;
+ color:#eee;
+ font-family:Arial;
+}
+
+header{
+ background:#111;
+ padding:15px;
+ text-align:center;
+ color:gold;
+ font-size:22px;
+}
+
+.container{
+ max-width:1500px;
+ margin:auto;
+ padding:20px;
+}
+
+.card{
+ background:#151922;
+ padding:20px;
+ border-radius:12px;
+ margin-bottom:20px;
+}
+
+button{
+ background:gold;
+ border:none;
+ padding:8px 14px;
+ border-radius:6px;
+ font-weight:bold;
+ cursor:pointer;
+}
+
+input,select{
+ width:100%;
+ padding:7px;
+ margin:5px 0;
+ background:#0b0e14;
+ color:white;
+ border:1px solid #333;
+}
+
+table{
+ width:100%;
+ border-collapse:collapse;
+ font-size:12px;
+}
+
+th,td{
+ border-bottom:1px solid #333;
+ padding:6px;
+}
+
 th{color:gold}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
-.kpi{background:#0b0e14;border:1px solid #333;padding:12px;border-radius:8px;text-align:center}
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ gap:15px;
+}
+
+.kpi{
+ background:#0b0e14;
+ border:1px solid #333;
+ padding:12px;
+ border-radius:8px;
+ text-align:center;
+}
+
+.alert{
+ background:#200;
+ border:1px solid red;
+ padding:10px;
+ border-radius:8px;
+ margin-top:10px;
+}
+
+.good{
+ background:#021;
+ border:1px solid green;
+ padding:10px;
+ border-radius:8px;
+ margin-top:10px;
+}
+
 </style>
 </head>
 
 <body>
 
-<header>AntiquaVision Smart PRO+</header>
+<header>
+AntiquaVision Smart PRO+ — Business Intelligence
+</header>
 
 <div class="container">
 
 <!-- IMPORT -->
+
 <div class="card">
-<h3>📂 Import File</h3>
+
+<h3>📂 Carica Excel / CSV</h3>
+
 <input type="file" id="fileInput">
+
 <button onclick="loadFile()">Analizza</button>
+
 <div id="result"></div>
+
 </div>
 
 <!-- KPI -->
+
 <div class="card">
-<h3>📊 KPI</h3>
+
+<h3>📊 Indicatori Principali</h3>
+
 <div class="grid" id="kpi"></div>
+
 </div>
 
-<!-- SIMULATORE -->
-<div class="card">
-<h3>💡 Simulatore Investimento</h3>
-<input id="simCost" placeholder="Costo previsto">
-<input id="simPrice" placeholder="Prezzo previsto">
-<button onclick="simulate()">Simula</button>
-<div id="simRes"></div>
-</div>
+<!-- SALES -->
 
-<!-- GRAFICI -->
 <div class="card">
+
 <h3>📈 Vendite per Mese</h3>
-<select id="typeSales" onchange="drawSales()">
-<option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
+
+<select id="typeSales" onchange="drawSalesChart()">
+<option>bar</option>
+<option>line</option>
+<option>pie</option>
+<option>doughnut</option>
 </select>
+
 <canvas id="salesChart"></canvas>
+
+</div>
+
+<!-- PROFIT -->
+
+<div class="card">
+
+<h3>💰 Profitto per Tipologia</h3>
+
+<select id="typeProfit" onchange="drawProfitChart()">
+<option>bar</option>
+<option>line</option>
+<option>pie</option>
+<option>doughnut</option>
+</select>
+
+<canvas id="profitChart"></canvas>
+
+</div>
+
+<!-- COUNTRY -->
+
+<div class="card">
+
+<h3>🌍 Vendite per Paese</h3>
+
+<select id="typeCountry" onchange="drawCountryChart()">
+<option>bar</option>
+<option>pie</option>
+<option>doughnut</option>
+</select>
+
+<canvas id="countryChart"></canvas>
+
+</div>
+
+<!-- SITE -->
+
+<div class="card">
+
+<h3>🛒 Vendite per Canale</h3>
+
+<select id="typeSite" onchange="drawSiteChart()">
+<option>bar</option>
+<option>pie</option>
+<option>doughnut</option>
+</select>
+
+<canvas id="siteChart"></canvas>
+
+</div>
+
+<!-- ERA -->
+
+<div class="card">
+
+<h3>🏛️ Profitto per Epoca</h3>
+
+<select id="typeEra" onchange="drawEraChart()">
+<option>bar</option>
+<option>line</option>
+<option>pie</option>
+<option>doughnut</option>
+</select>
+
+<canvas id="eraChart"></canvas>
+
+</div>
+
+<!-- VELOCITA -->
+
+<div class="card">
+
+<h3>⚡ Velocità di Vendita (Mesi)</h3>
+
+<canvas id="speedChart"></canvas>
+
+</div>
+
+<!-- MARGINE -->
+
+<div class="card">
+
+<h3>📉 Margine per Tipologia</h3>
+
+<canvas id="marginChart"></canvas>
+
 </div>
 
 <!-- AI -->
+
 <div class="card">
-<h3>🤖 AI Advisor</h3>
+
+<h3>🤖 Consigli Strategici AI</h3>
+
 <div id="ai"></div>
-</div>
 
-<!-- ADD MANUAL -->
-<div class="card">
-<h3>➕ Aggiungi Vendita</h3>
-
-<input id="n_nome" placeholder="Nome">
-<input id="n_mese" placeholder="Mese (2025-01)">
-<input id="n_paese" placeholder="Paese">
-<input id="n_sito" placeholder="Canale">
-<input id="n_prezzo" placeholder="Prezzo">
-<input id="n_costo" placeholder="Costo">
-<input id="n_epoca" placeholder="Epoca">
-
-<button onclick="addManual()">Salva</button>
 </div>
 
 <!-- TABLE -->
+
 <div class="card">
+
 <h3>📋 Tutti i Dati</h3>
+
 <table id="table"></table>
+
 </div>
 
 </div>
 
 <script>
 
-let data=JSON.parse(localStorage.getItem("avData")||"[]");
-let chart=null;
+let data=[];
+let charts={};
 
-/* SAVE */
-function save(){
- localStorage.setItem("avData",JSON.stringify(data));
-}
+/* LOAD */
 
-/* LOAD FILE */
 function loadFile(){
 
- let f=fileInput.files[0];
- if(!f)return alert("Seleziona file");
+ let file=fileInput.files[0];
 
- let ext=f.name.split(".").pop();
+ if(!file){
+  alert("Seleziona un file");
+  return;
+ }
 
- if(ext=="xlsx") excel(f);
- else csv(f);
+ let ext=file.name.split(".").pop().toLowerCase();
+
+ if(ext==="xlsx") readExcel(file);
+ else readCSV(file);
 }
 
-function excel(f){
+/* EXCEL */
 
- let r=new FileReader();
+function readExcel(file){
 
- r.onload=e=>{
+ let reader=new FileReader();
 
-  let wb=XLSX.read(new Uint8Array(e.target.result),{type:"array"});
-  let s=wb.Sheets[wb.SheetNames[0]];
+ reader.onload=e=>{
 
-  process(XLSX.utils.sheet_to_json(s));
+  let arr=new Uint8Array(e.target.result);
+
+  let wb=XLSX.read(arr,{type:"array"});
+
+  let sheet=wb.Sheets[wb.SheetNames[0]];
+
+  let json=XLSX.utils.sheet_to_json(sheet);
+
+  process(json);
  };
 
- r.readAsArrayBuffer(f);
+ reader.readAsArrayBuffer(file);
 }
 
-function csv(f){
+/* CSV */
 
- Papa.parse(f,{
+function readCSV(file){
+
+ Papa.parse(file,{
   header:true,
   skipEmptyLines:true,
   complete:r=>process(r.data)
@@ -137,169 +315,245 @@ function csv(f){
 }
 
 /* PROCESS */
+
 function process(rows){
+
+ data=[];
 
  rows.forEach(r=>{
 
+  function num(v){
+   return Number(
+    String(v||"")
+    .replace("€","")
+    .replace("%","")
+    .replace(",",".")
+    .replace(/\s/g,"")
+   )||0;
+  }
+
   data.push({
+
    nome:r["Merce venduta"]||"",
-   mese:r["MeseNorm"]||"",
    paese:r["Nazionalita acquirente"]||"",
    sito:r["luogo di vendita"]||"",
+   tipo:r["TIPOLOGIA"]||"",
+   epoca:r["epoca"]||"",
+   mese:r["MeseNorm"]||"",
+   anno:r["anno di acquisto"]||"",
+
    prezzo:num(r["prezzo di vendita"]),
    costo:num(r["acquisto"]),
    profitto:num(r["profitto"]),
-   epoca:r["epoca"]||""
+   margine:num(r["margine %"])
+
   });
 
  });
 
- save();
- render();
+ result.innerHTML="✔️ "+data.length+" record caricati";
 
- result.innerHTML="✔️ Import completato";
+ renderAll();
 }
 
-function num(v){
- return Number(String(v||"").replace("€","").replace("%","").replace(",",".").replace(/\s/g,""))||0;
-}
+/* MAIN */
 
-/* ADD */
-function addManual(){
-
- data.push({
-  nome:n_nome.value,
-  mese:n_mese.value,
-  paese:n_paese.value,
-  sito:n_sito.value,
-  prezzo:num(n_prezzo.value),
-  costo:num(n_costo.value),
-  profitto:num(n_prezzo.value)-num(n_costo.value),
-  epoca:n_epoca.value
- });
-
- save();
- render();
-
- alert("Aggiunto ✔️");
-}
-
-/* SIMULATE */
-function simulate(){
-
- let c=num(simCost.value);
- let p=num(simPrice.value);
-
- let prof=p-c;
-
- simRes.innerHTML=
-  `Profitto stimato: <b>${prof}€</b>`+
-  (prof>0?" ✅ Conviene":" ❌ Rischioso");
-}
-
-/* RENDER */
-function render(){
+function renderAll(){
 
  renderKPI();
  renderTable();
- drawSales();
+
+ drawSalesChart();
+ drawProfitChart();
+ drawCountryChart();
+ drawSiteChart();
+ drawEraChart();
+ drawSpeedChart();
+ drawMarginChart();
+
  renderAI();
 }
 
+/* KPI */
+
 function renderKPI(){
 
- let rev=0,prof=0;
+ let rev=0,cost=0,prof=0;
 
  data.forEach(x=>{
   rev+=x.prezzo;
+  cost+=x.costo;
   prof+=x.profitto;
  });
 
+ let roi=(prof/cost*100)||0;
+
  kpi.innerHTML=`
 
- <div class="kpi"><b>${rev.toFixed(0)}</b><br>Entrate</div>
- <div class="kpi"><b>${prof.toFixed(0)}</b><br>Profitto</div>
- <div class="kpi"><b>${data.length}</b><br>Record</div>
+ <div class="kpi"><b>${rev.toFixed(0)}€</b><br>Entrate</div>
+ <div class="kpi"><b>${cost.toFixed(0)}€</b><br>Costi</div>
+ <div class="kpi"><b>${prof.toFixed(0)}€</b><br>Profitto</div>
+ <div class="kpi"><b>${roi.toFixed(1)}%</b><br>ROI</div>
+ <div class="kpi"><b>${data.length}</b><br>Vendite</div>
 
  `;
 }
 
-/* TABLE */
-function renderTable(){
+/* GROUP */
 
- let h="<tr><th>Nome</th><th>Mese</th><th>Paese</th><th>Prezzo</th><th>Profitto</th></tr>";
+function group(key,value){
+
+ let o={};
 
  data.forEach(x=>{
-  h+=`
-  <tr>
-   <td>${x.nome}</td>
-   <td>${x.mese}</td>
-   <td>${x.paese}</td>
-   <td>${x.prezzo}</td>
-   <td>${x.profitto}</td>
-  </tr>`;
+  if(!x[key]) return;
+  o[x[key]]=(o[x[key]]||0)+x[value];
  });
 
- table.innerHTML=h;
+ return o;
 }
 
-/* CHART */
-function drawSales(){
+/* DRAW */
 
- let m={};
+function draw(ref,id,type,label,obj){
 
- data.forEach(x=>{
-  if(!x.mese)return;
-  m[x.mese]=(m[x.mese]||0)+x.prezzo;
- });
+ if(charts[ref]) charts[ref].destroy();
 
- if(chart) chart.destroy();
-
- chart=new Chart(salesChart,{
-  type:typeSales.value,
+ charts[ref]=new Chart(document.getElementById(id),{
+  type:type,
   data:{
-   labels:Object.keys(m),
+   labels:Object.keys(obj),
    datasets:[{
-    label:"Vendite",
-    data:Object.values(m),
+    label:label,
+    data:Object.values(obj),
     backgroundColor:"gold"
    }]
   }
  });
 }
 
-/* AI */
-function renderAI(){
+/* CHARTS */
 
- let bySite={},byCountry={};
+function drawSalesChart(){
+ draw("sales","salesChart",typeSales.value,"Vendite",group("mese","prezzo"));
+}
+
+function drawProfitChart(){
+ draw("profit","profitChart",typeProfit.value,"Profitto",group("tipo","profitto"));
+}
+
+function drawCountryChart(){
+ draw("country","countryChart",typeCountry.value,"Paesi",group("paese","prezzo"));
+}
+
+function drawSiteChart(){
+ draw("site","siteChart",typeSite.value,"Canali",group("sito","prezzo"));
+}
+
+function drawEraChart(){
+ draw("era","eraChart",typeEra.value,"Epoche",group("epoca","profitto"));
+}
+
+function drawSpeedChart(){
+
+ let obj={};
 
  data.forEach(x=>{
-  bySite[x.sito]=(bySite[x.sito]||0)+x.profitto;
-  byCountry[x.paese]=(byCountry[x.paese]||0)+x.profitto;
+  if(!x.anno||!x.mese) return;
+
+  let speed=Math.abs(new Date().getFullYear()-Number(x.anno));
+
+  obj[x.nome]=(obj[x.nome]||0)+speed;
  });
+
+ draw("speed","speedChart","bar","Velocità",obj);
+}
+
+function drawMarginChart(){
+ draw("margin","marginChart","bar","Margine",group("tipo","margine"));
+}
+
+/* TABLE */
+
+function renderTable(){
+
+ let h="<tr><th>Nome</th><th>Mese</th><th>Tipo</th><th>Prezzo</th><th>Profitto</th><th>Margine</th><th>Epoca</th></tr>";
+
+ data.forEach(x=>{
+
+  h+=`
+  <tr>
+   <td>${x.nome}</td>
+   <td>${x.mese}</td>
+   <td>${x.tipo}</td>
+   <td>${x.prezzo}</td>
+   <td>${x.profitto}</td>
+   <td>${x.margine}%</td>
+   <td>${x.epoca}</td>
+  </tr>
+  `;
+ });
+
+ table.innerHTML=h;
+}
+
+/* AI */
+
+function renderAI(){
+
+ let byType=group("tipo","profitto");
+ let bySite=group("sito","profitto");
+ let byEra=group("epoca","profitto");
+ let byMargin=group("tipo","margine");
+
+ let bestType=maxKey(byType);
+ let worstType=minKey(byType);
+ let bestSite=maxKey(bySite);
+ let bestEra=maxKey(byEra);
+ let bestMargin=maxKey(byMargin);
 
  ai.innerHTML=`
 
- 🔝 Miglior canale: <b>${max(bySite)}</b><br>
- 🌍 Miglior paese: <b>${max(byCountry)}</b><br>
- 📌 Consiglio: investi lì.
+ <div class="good">
+ ✅ Miglior tipologia: <b>${bestType}</b><br>
+ ✅ Miglior canale: <b>${bestSite}</b><br>
+ ✅ Miglior epoca: <b>${bestEra}</b><br>
+ ✅ Margine top: <b>${bestMargin}</b>
+ </div>
+
+ <div class="alert">
+ ⚠️ Tipologia debole: <b>${worstType}</b><br>
+ ⚠️ Rischio investimento
+ </div>
+
+ 📌 Strategia:<br>
+ Investi in <b>${bestEra}</b> con <b>${bestSite}</b>.
+ Riduci acquisti in <b>${worstType}</b>.
 
  `;
 }
 
-function max(o){
+function maxKey(o){
 
- let m=0,k="N/D";
+ let m=0,k="";
 
- for(let i in o){
-  if(o[i]>m){m=o[i];k=i}
+ for(let x in o){
+  if(o[x]>m){m=o[x];k=x;}
  }
 
- return k;
+ return k||"N/D";
 }
 
-/* INIT */
-render();
+function minKey(o){
+
+ let m=Infinity,k="";
+
+ for(let x in o){
+  if(o[x]<m){m=o[x];k=x;}
+ }
+
+ return k||"N/D";
+}
 
 </script>
 
