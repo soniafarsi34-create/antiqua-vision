@@ -2,283 +2,134 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>AntiquaVision Smart PRO</title>
+<title>AntiquaVision Smart PRO+</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
-
-body{
- margin:0;
- background:#0b0e14;
- color:#eee;
- font-family:Arial;
-}
-
-header{
- background:#111;
- padding:15px;
- text-align:center;
- color:gold;
- font-size:22px;
-}
-
-.container{
- max-width:1400px;
- margin:auto;
- padding:20px;
-}
-
-.card{
- background:#151922;
- padding:20px;
- border-radius:12px;
- margin-bottom:20px;
-}
-
-button{
- background:gold;
- border:none;
- padding:8px 14px;
- border-radius:6px;
- font-weight:bold;
- cursor:pointer;
-}
-
-input,select{
- width:100%;
- padding:7px;
- margin:5px 0;
- background:#0b0e14;
- color:white;
- border:1px solid #333;
-}
-
-table{
- width:100%;
- border-collapse:collapse;
- font-size:13px;
-}
-
-th,td{
- border-bottom:1px solid #333;
- padding:6px;
-}
-
+body{margin:0;background:#0b0e14;color:#eee;font-family:Arial}
+header{background:#111;padding:15px;text-align:center;color:gold;font-size:22px}
+.container{max-width:1400px;margin:auto;padding:20px}
+.card{background:#151922;padding:20px;border-radius:12px;margin-bottom:20px}
+button{background:gold;border:none;padding:8px 14px;border-radius:6px;font-weight:bold;cursor:pointer}
+input,select{width:100%;padding:7px;margin:5px 0;background:#0b0e14;color:white;border:1px solid #333}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border-bottom:1px solid #333;padding:6px}
 th{color:gold}
-
-.grid{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
- gap:15px;
-}
-
-.kpi{
- background:#0b0e14;
- border:1px solid #333;
- padding:12px;
- border-radius:8px;
- text-align:center;
-}
-
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.kpi{background:#0b0e14;border:1px solid #333;padding:12px;border-radius:8px;text-align:center}
 </style>
 </head>
 
 <body>
 
-<header>
-AntiquaVision Smart PRO — Analisi Intelligente
-</header>
+<header>AntiquaVision Smart PRO+</header>
 
 <div class="container">
 
 <!-- IMPORT -->
-
 <div class="card">
-
-<h3>📂 Carica Excel / CSV</h3>
-
+<h3>📂 Import File</h3>
 <input type="file" id="fileInput">
-
 <button onclick="loadFile()">Analizza</button>
-
 <div id="result"></div>
-
 </div>
 
 <!-- KPI -->
-
 <div class="card">
-
-<h3>📊 Indicatori Principali</h3>
-
+<h3>📊 KPI</h3>
 <div class="grid" id="kpi"></div>
-
 </div>
 
-<!-- GRAFICI VENDITE -->
-
+<!-- SIMULATORE -->
 <div class="card">
+<h3>💡 Simulatore Investimento</h3>
+<input id="simCost" placeholder="Costo previsto">
+<input id="simPrice" placeholder="Prezzo previsto">
+<button onclick="simulate()">Simula</button>
+<div id="simRes"></div>
+</div>
 
+<!-- GRAFICI -->
+<div class="card">
 <h3>📈 Vendite per Mese</h3>
-
-<select id="typeSales" onchange="drawSalesChart()">
-<option>bar</option>
-<option>line</option>
-<option>pie</option>
-<option>doughnut</option>
+<select id="typeSales" onchange="drawSales()">
+<option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
 </select>
-
 <canvas id="salesChart"></canvas>
-
-</div>
-
-<!-- PROFITTO -->
-
-<div class="card">
-
-<h3>💰 Profitto per Categoria</h3>
-
-<select id="typeProfit" onchange="drawProfitChart()">
-<option>bar</option>
-<option>line</option>
-<option>pie</option>
-<option>doughnut</option>
-</select>
-
-<canvas id="profitChart"></canvas>
-
-</div>
-
-<!-- PAESI -->
-
-<div class="card">
-
-<h3>🌍 Vendite per Paese</h3>
-
-<select id="typeCountry" onchange="drawCountryChart()">
-<option>bar</option>
-<option>pie</option>
-<option>doughnut</option>
-</select>
-
-<canvas id="countryChart"></canvas>
-
-</div>
-
-<!-- SITI -->
-
-<div class="card">
-
-<h3>🛒 Vendite per Canale</h3>
-
-<select id="typeSite" onchange="drawSiteChart()">
-<option>bar</option>
-<option>pie</option>
-<option>doughnut</option>
-</select>
-
-<canvas id="siteChart"></canvas>
-
-</div>
-
-<!-- EPOCHE -->
-
-<div class="card">
-
-<h3>🏛️ Profitto per Epoca</h3>
-
-<select id="typeEra" onchange="drawEraChart()">
-<option>bar</option>
-<option>line</option>
-<option>pie</option>
-<option>doughnut</option>
-</select>
-
-<canvas id="eraChart"></canvas>
-
 </div>
 
 <!-- AI -->
-
 <div class="card">
-
-<h3>🤖 Consigli Intelligenti</h3>
-
+<h3>🤖 AI Advisor</h3>
 <div id="ai"></div>
-
 </div>
 
-<!-- TABELLA -->
-
+<!-- ADD MANUAL -->
 <div class="card">
+<h3>➕ Aggiungi Vendita</h3>
 
+<input id="n_nome" placeholder="Nome">
+<input id="n_mese" placeholder="Mese (2025-01)">
+<input id="n_paese" placeholder="Paese">
+<input id="n_sito" placeholder="Canale">
+<input id="n_prezzo" placeholder="Prezzo">
+<input id="n_costo" placeholder="Costo">
+<input id="n_epoca" placeholder="Epoca">
+
+<button onclick="addManual()">Salva</button>
+</div>
+
+<!-- TABLE -->
+<div class="card">
 <h3>📋 Tutti i Dati</h3>
-
 <table id="table"></table>
-
 </div>
 
 </div>
 
 <script>
 
-let data=[];
+let data=JSON.parse(localStorage.getItem("avData")||"[]");
+let chart=null;
 
-let charts={
- sales:null,
- profit:null,
- country:null,
- site:null,
- era:null
-};
+/* SAVE */
+function save(){
+ localStorage.setItem("avData",JSON.stringify(data));
+}
 
 /* LOAD FILE */
-
 function loadFile(){
 
- let file=fileInput.files[0];
+ let f=fileInput.files[0];
+ if(!f)return alert("Seleziona file");
 
- if(!file){
-  alert("Seleziona un file");
-  return;
- }
+ let ext=f.name.split(".").pop();
 
- let ext=file.name.split(".").pop().toLowerCase();
-
- if(ext==="xlsx") readExcel(file);
- else readCSV(file);
+ if(ext=="xlsx") excel(f);
+ else csv(f);
 }
 
-/* EXCEL */
+function excel(f){
 
-function readExcel(file){
+ let r=new FileReader();
 
- let reader=new FileReader();
+ r.onload=e=>{
 
- reader.onload=e=>{
+  let wb=XLSX.read(new Uint8Array(e.target.result),{type:"array"});
+  let s=wb.Sheets[wb.SheetNames[0]];
 
-  let arr=new Uint8Array(e.target.result);
-
-  let wb=XLSX.read(arr,{type:"array"});
-
-  let sheet=wb.Sheets[wb.SheetNames[0]];
-
-  let json=XLSX.utils.sheet_to_json(sheet);
-
-  process(json);
+  process(XLSX.utils.sheet_to_json(s));
  };
 
- reader.readAsArrayBuffer(file);
+ r.readAsArrayBuffer(f);
 }
 
-/* CSV */
+function csv(f){
 
-function readCSV(file){
-
- Papa.parse(file,{
+ Papa.parse(f,{
   header:true,
   skipEmptyLines:true,
   complete:r=>process(r.data)
@@ -286,245 +137,169 @@ function readCSV(file){
 }
 
 /* PROCESS */
-
 function process(rows){
-
- data=[];
 
  rows.forEach(r=>{
 
-  function num(v){
-   return Number(
-    String(v||"")
-    .replace("€","")
-    .replace("%","")
-    .replace(",",".")
-    .replace(/\s/g,"")
-   )||0;
-  }
-
   data.push({
-
    nome:r["Merce venduta"]||"",
+   mese:r["MeseNorm"]||"",
    paese:r["Nazionalita acquirente"]||"",
    sito:r["luogo di vendita"]||"",
-   tipo:r["TIPOLOGIA"]||"",
-   epoca:r["epoca"]||"",
-   mese:r["MeseNorm"]||"",
-
    prezzo:num(r["prezzo di vendita"]),
    costo:num(r["acquisto"]),
    profitto:num(r["profitto"]),
-   margine:num(r["margine %"])
+   epoca:r["epoca"]||""
   });
 
  });
 
- result.innerHTML="✔️ "+data.length+" record caricati";
+ save();
+ render();
 
- renderAll();
+ result.innerHTML="✔️ Import completato";
 }
 
-/* MAIN */
+function num(v){
+ return Number(String(v||"").replace("€","").replace("%","").replace(",",".").replace(/\s/g,""))||0;
+}
 
-function renderAll(){
+/* ADD */
+function addManual(){
+
+ data.push({
+  nome:n_nome.value,
+  mese:n_mese.value,
+  paese:n_paese.value,
+  sito:n_sito.value,
+  prezzo:num(n_prezzo.value),
+  costo:num(n_costo.value),
+  profitto:num(n_prezzo.value)-num(n_costo.value),
+  epoca:n_epoca.value
+ });
+
+ save();
+ render();
+
+ alert("Aggiunto ✔️");
+}
+
+/* SIMULATE */
+function simulate(){
+
+ let c=num(simCost.value);
+ let p=num(simPrice.value);
+
+ let prof=p-c;
+
+ simRes.innerHTML=
+  `Profitto stimato: <b>${prof}€</b>`+
+  (prof>0?" ✅ Conviene":" ❌ Rischioso");
+}
+
+/* RENDER */
+function render(){
 
  renderKPI();
  renderTable();
-
- drawSalesChart();
- drawProfitChart();
- drawCountryChart();
- drawSiteChart();
- drawEraChart();
-
+ drawSales();
  renderAI();
 }
 
-/* KPI */
-
 function renderKPI(){
 
- let rev=0,cost=0,prof=0;
+ let rev=0,prof=0;
 
  data.forEach(x=>{
   rev+=x.prezzo;
-  cost+=x.costo;
   prof+=x.profitto;
  });
 
- let roi=(prof/cost*100)||0;
-
  kpi.innerHTML=`
 
- <div class="kpi"><b>${rev.toFixed(0)}€</b><br>Entrate</div>
- <div class="kpi"><b>${cost.toFixed(0)}€</b><br>Costi</div>
- <div class="kpi"><b>${prof.toFixed(0)}€</b><br>Profitto</div>
- <div class="kpi"><b>${roi.toFixed(1)}%</b><br>ROI</div>
- <div class="kpi"><b>${data.length}</b><br>Vendite</div>
+ <div class="kpi"><b>${rev.toFixed(0)}</b><br>Entrate</div>
+ <div class="kpi"><b>${prof.toFixed(0)}</b><br>Profitto</div>
+ <div class="kpi"><b>${data.length}</b><br>Record</div>
 
  `;
 }
 
-/* UTILS */
+/* TABLE */
+function renderTable(){
 
-function group(key,value){
-
- let o={};
+ let h="<tr><th>Nome</th><th>Mese</th><th>Paese</th><th>Prezzo</th><th>Profitto</th></tr>";
 
  data.forEach(x=>{
-  if(!x[key]) return;
-
-  o[x[key]]=(o[x[key]]||0)+x[value];
+  h+=`
+  <tr>
+   <td>${x.nome}</td>
+   <td>${x.mese}</td>
+   <td>${x.paese}</td>
+   <td>${x.prezzo}</td>
+   <td>${x.profitto}</td>
+  </tr>`;
  });
 
- return o;
+ table.innerHTML=h;
 }
 
-function draw(ref,id,type,label,obj){
+/* CHART */
+function drawSales(){
 
- if(charts[ref]) charts[ref].destroy();
+ let m={};
 
- charts[ref]=new Chart(document.getElementById(id),{
-  type:type,
+ data.forEach(x=>{
+  if(!x.mese)return;
+  m[x.mese]=(m[x.mese]||0)+x.prezzo;
+ });
+
+ if(chart) chart.destroy();
+
+ chart=new Chart(salesChart,{
+  type:typeSales.value,
   data:{
-   labels:Object.keys(obj),
+   labels:Object.keys(m),
    datasets:[{
-    label:label,
-    data:Object.values(obj),
+    label:"Vendite",
+    data:Object.values(m),
     backgroundColor:"gold"
    }]
   }
  });
 }
 
-/* SALES */
-
-function drawSalesChart(){
-
- let obj=group("mese","prezzo");
-
- draw("sales","salesChart",
-  typeSales.value,
-  "Vendite",
-  obj
- );
-}
-
-/* PROFIT */
-
-function drawProfitChart(){
-
- let obj=group("tipo","profitto");
-
- draw("profit","profitChart",
-  typeProfit.value,
-  "Profitto",
-  obj
- );
-}
-
-/* COUNTRY */
-
-function drawCountryChart(){
-
- let obj=group("paese","prezzo");
-
- draw("country","countryChart",
-  typeCountry.value,
-  "Paesi",
-  obj
- );
-}
-
-/* SITE */
-
-function drawSiteChart(){
-
- let obj=group("sito","prezzo");
-
- draw("site","siteChart",
-  typeSite.value,
-  "Canali",
-  obj
- );
-}
-
-/* ERA */
-
-function drawEraChart(){
-
- let obj=group("epoca","profitto");
-
- draw("era","eraChart",
-  typeEra.value,
-  "Epoche",
-  obj
- );
-}
-
-/* TABLE */
-
-function renderTable(){
-
- let h="<tr><th>Nome</th><th>Mese</th><th>Paese</th><th>Sito</th><th>Prezzo</th><th>Profitto</th><th>Epoca</th></tr>";
-
- data.forEach(x=>{
-
-  h+=`
-  <tr>
-   <td>${x.nome}</td>
-   <td>${x.mese}</td>
-   <td>${x.paese}</td>
-   <td>${x.sito}</td>
-   <td>${x.prezzo}</td>
-   <td>${x.profitto}</td>
-   <td>${x.epoca}</td>
-  </tr>
-  `;
- });
-
- table.innerHTML=h;
-}
-
 /* AI */
-
 function renderAI(){
 
- let bySite=group("sito","profitto");
- let byCountry=group("paese","profitto");
- let byEra=group("epoca","profitto");
+ let bySite={},byCountry={};
 
- let bestSite=maxKey(bySite);
- let bestCountry=maxKey(byCountry);
- let bestEra=maxKey(byEra);
+ data.forEach(x=>{
+  bySite[x.sito]=(bySite[x.sito]||0)+x.profitto;
+  byCountry[x.paese]=(byCountry[x.paese]||0)+x.profitto;
+ });
 
  ai.innerHTML=`
 
- ✅ Miglior canale: <b>${bestSite}</b><br>
- 🌍 Miglior paese: <b>${bestCountry}</b><br>
- 🏛️ Miglior epoca: <b>${bestEra}</b><br><br>
-
- 📌 Consiglio: investi di più in <b>${bestEra}</b>
- tramite <b>${bestSite}</b>.
+ 🔝 Miglior canale: <b>${max(bySite)}</b><br>
+ 🌍 Miglior paese: <b>${max(byCountry)}</b><br>
+ 📌 Consiglio: investi lì.
 
  `;
 }
 
-function maxKey(obj){
+function max(o){
 
- let max=0;
- let key="";
+ let m=0,k="N/D";
 
- for(let k in obj){
-  if(obj[k]>max){
-   max=obj[k];
-   key=k;
-  }
+ for(let i in o){
+  if(o[i]>m){m=o[i];k=i}
  }
 
- return key||"N/D";
+ return k;
 }
+
+/* INIT */
+render();
 
 </script>
 
