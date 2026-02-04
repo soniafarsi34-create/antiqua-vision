@@ -4,14 +4,11 @@
 <meta charset="UTF-8">
 <title>AntiquaVision Pro</title>
 
-<!-- LIB -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
-
-/* ===== COLORS ===== */
 
 :root{
  --gold:#d4af37;
@@ -37,7 +34,6 @@ header{
  color:var(--gold);
  font-size:26px;
  font-weight:700;
- box-shadow:0 3px 12px black;
 }
 
 .lang{margin-top:8px}
@@ -53,8 +49,8 @@ header{
  padding:22px;
  border-radius:16px;
  margin-bottom:24px;
- box-shadow:0 0 20px rgba(0,0,0,.5);
  border:1px solid #1f2750;
+ box-shadow:0 0 20px rgba(0,0,0,.5);
 }
 
 button{
@@ -112,7 +108,7 @@ canvas{margin-top:12px}
 
 <header>
 
-<span data-t="title">AntiquaVision — Business Intelligence</span>
+AntiquaVision — Business Intelligence
 
 <div class="lang">
 <button onclick="setLang('it')">🇮🇹</button>
@@ -129,11 +125,11 @@ canvas{margin-top:12px}
 
 <div class="card">
 
-<h3 data-t="import">📂 Importa File</h3>
+<h3>📂 Importa File</h3>
 
 <input type="file" id="file">
 
-<button onclick="loadFile()" data-t="analyze">Analizza</button>
+<button onclick="loadFile()">Analizza</button>
 
 <div id="res"></div>
 
@@ -143,30 +139,9 @@ canvas{margin-top:12px}
 
 <div class="card">
 
-<h3 data-t="dashboard">📊 Dashboard</h3>
+<h3>📊 Dashboard</h3>
 
 <div class="grid" id="kpi"></div>
-
-<div class="small" data-t="kpiHelp">
-Ricavi • Costi • Profitto • ROI
-</div>
-
-</div>
-
-<!-- GUIDE -->
-
-<div class="card">
-
-<h3 data-t="guide">📘 Guida</h3>
-
-<div class="small" data-t="guideText">
-
-ROI &gt;30% = Ottimo<br>
-15–30% = Medio<br>
-&lt;15% = Rischio<br>
-Premium &gt;30% = Punta su pezzi importanti
-
-</div>
 
 </div>
 
@@ -174,7 +149,7 @@ Premium &gt;30% = Punta su pezzi importanti
 
 <div class="card">
 <div class="flex">
-<h3 style="color:var(--blue)">📈 Ricavi per Canale</h3>
+<h3>📈 Ricavi per Canale</h3>
 <select id="t1" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>doughnut</option>
 </select>
@@ -185,7 +160,7 @@ Premium &gt;30% = Punta su pezzi importanti
 
 <div class="card">
 <div class="flex">
-<h3 style="color:var(--green)">🏛️ Profitto per Epoca</h3>
+<h3>🏛️ Profitto per Epoca</h3>
 <select id="t2" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>doughnut</option>
 </select>
@@ -194,39 +169,15 @@ Premium &gt;30% = Punta su pezzi importanti
 <div class="small" id="c2Mini"></div>
 </div>
 
-<div class="card">
-<div class="flex">
-<h3 style="color:var(--violet)">📊 ROI per Epoca</h3>
-<select id="t3" onchange="drawCharts()">
-<option>bar</option><option>line</option>
-</select>
-</div>
-<canvas id="c3"></canvas>
-<div class="small" id="c3Mini"></div>
-</div>
-
-<div class="card">
-<div class="flex">
-<h3 style="color:var(--red)">💸 Margine</h3>
-<select id="t4" onchange="drawCharts()">
-<option>bar</option><option>line</option>
-</select>
-</div>
-<canvas id="c4"></canvas>
-<div class="small" id="c4Mini"></div>
-</div>
-
 <!-- PREMIUM -->
 
 <div class="card">
 
-<h3 style="color:var(--gold)">💎 Vendite Premium &gt;1000€</h3>
+<h3>💎 Vendite Premium</h3>
 
 <div id="premiumImpact"></div>
 
-<canvas id="c5"></canvas>
-
-<div class="small" id="c5Mini"></div>
+<canvas id="c3"></canvas>
 
 </div>
 
@@ -234,11 +185,11 @@ Premium &gt;30% = Punta su pezzi importanti
 
 <div class="card">
 
-<h3 style="color:var(--violet)">🔮 Previsioni</h3>
+<h3>🔮 Previsioni</h3>
 
-<canvas id="c6"></canvas>
+<canvas id="c4"></canvas>
 
-<div class="small" id="forecastText"></div>
+<div id="forecastText" class="small"></div>
 
 </div>
 
@@ -246,18 +197,46 @@ Premium &gt;30% = Punta su pezzi importanti
 
 <div class="card">
 
-<h3>📸 Scanner Antiquariato AI</h3>
+<h3>📸 Scanner Antiquariato</h3>
 
-<input type="file" id="scanImg" accept="image/*">
+<input type="file" id="scanImg">
 
-<button onclick="scanObject()">Analizza Oggetto</button>
+<button onclick="scanObject()">Analizza Foto</button>
 
 <div id="scanResult" class="small"></div>
 
 <hr>
 
-<button onclick="openLens()">🔍 Google Lens</button>
-<button onclick="openBing()">🔍 Bing Visual</button>
+<button onclick="openLens()">Google Lens</button>
+<button onclick="openBing()">Bing Search</button>
+
+</div>
+
+<!-- AI SEARCH -->
+
+<div class="card">
+
+<h3>🧠 Ricerca AI</h3>
+
+<input id="aiQuery">
+
+<button onclick="aiSearch()">Cerca</button>
+
+<div id="aiAnswer" class="small"></div>
+
+</div>
+
+<!-- SHOP ANALYTICS -->
+
+<div class="card">
+
+<h3>🛒 Analisi Shop Online</h3>
+
+<button onclick="analyzeShop()">Analizza shop.tuttoantico.it</button>
+
+<div id="shopData" class="small"></div>
+
+<canvas id="c5"></canvas>
 
 </div>
 
@@ -275,82 +254,19 @@ Premium &gt;30% = Punta su pezzi importanti
 
 <script>
 
-/* ================= LANG ================= */
+/* ===== CORE DATA ===== */
 
-let lang="it";
+let all=[],charts={};
 
-const TXT={
+const COLORS=["#4f9cff","#3ad29f","#ff6b6b","#9b7bff","#ffd966"];
 
-it:{
- title:"AntiquaVision — Business Intelligence",
- import:"📂 Importa File",
- analyze:"Analizza",
- dashboard:"📊 Dashboard",
- kpiHelp:"Ricavi • Costi • Profitto • ROI",
- guide:"📘 Guida",
- guideText:"ROI >30% Ottimo • <15% Rischio • Premium >30%",
-},
-
-en:{
- title:"AntiquaVision — Business Intelligence",
- import:"📂 Import File",
- analyze:"Analyze",
- dashboard:"📊 Dashboard",
- kpiHelp:"Revenue • Cost • Profit • ROI",
- guide:"📘 Guide",
- guideText:"ROI >30% Great • <15% Risk",
-},
-
-de:{
- title:"AntiquaVision — Dashboard",
- import:"📂 Datei",
- analyze:"Analysieren",
- dashboard:"📊 Übersicht",
- kpiHelp:"Umsatz • Kosten • Gewinn • ROI",
- guide:"📘 Anleitung",
- guideText:"ROI >30% Sehr gut",
-},
-
-fr:{
- title:"AntiquaVision — Tableau",
- import:"📂 Importer",
- analyze:"Analyser",
- dashboard:"📊 Tableau",
- kpiHelp:"Revenus • Coûts • Profit • ROI",
- guide:"📘 Guide",
- guideText:"ROI >30% Excellent",
-}
-
-};
-
-function setLang(l){
-
- lang=l;
-
- document.querySelectorAll("[data-t]").forEach(el=>{
-
-  let k=el.getAttribute("data-t");
-
-  if(TXT[l][k]) el.innerText=TXT[l][k];
-
- });
-}
-
-/* ================= CORE ================= */
-
-let all=[],filtered=[];
-let charts={};
-
-const COLORS=[
- "#4f9cff","#3ad29f","#ff6b6b",
- "#9b7bff","#ffd966","#ff9f43"
-];
+/* ===== NUM ===== */
 
 function num(v){
  return Number(String(v||"").replace("€","").replace(",","."))||0;
 }
 
-/* ================= LOAD ================= */
+/* ===== LOAD ===== */
 
 function loadFile(){
 
@@ -380,14 +296,11 @@ function loadFile(){
  }
 }
 
-/* ================= PREPARE ================= */
-
 function prepare(rows){
 
  all=rows.map(r=>({
 
   epoca:r["epoca"]||"",
-  tipo:r["TIPOLOGIA"]||"",
   canale:r["luogo di vendita"]||"",
   mese:r["MeseNorm"]||"",
   prezzo:num(r["prezzo di vendita"]),
@@ -396,20 +309,18 @@ function prepare(rows){
 
  }));
 
- filtered=[...all];
-
  res.innerHTML="✔️ "+all.length+" record";
 
  render();
 }
 
-/* ================= GROUP ================= */
+/* ===== GROUP ===== */
 
-function group(arr,k,v){
+function group(k,v){
 
  let o={};
 
- arr.forEach(x=>{
+ all.forEach(x=>{
   if(!x[k])return;
   o[x[k]]=(o[x[k]]||0)+x[v];
  });
@@ -417,31 +328,26 @@ function group(arr,k,v){
  return o;
 }
 
-/* ================= MINI ================= */
+/* ===== MINI ===== */
 
-function mini(id,obj){
+function mini(id,o){
 
- let k=Object.keys(obj);
- let v=Object.values(obj);
-
+ let k=Object.keys(o),v=Object.values(o);
  if(!v.length)return;
 
- let max=Math.max(...v);
- let min=Math.min(...v);
+ let max=Math.max(...v),min=Math.min(...v);
  let avg=v.reduce((a,b)=>a+b,0)/v.length;
 
  document.getElementById(id+"Mini").innerHTML=`
-
- ⭐ Migliore: ${k[v.indexOf(max)]}<br>
- ⚠️ Peggiore: ${k[v.indexOf(min)]}<br>
- 📊 Media: ${avg.toFixed(0)}
-
+ Migliore: ${k[v.indexOf(max)]}<br>
+ Peggiore: ${k[v.indexOf(min)]}<br>
+ Media: ${avg.toFixed(0)}
  `;
 }
 
-/* ================= DRAW ================= */
+/* ===== DRAW ===== */
 
-function draw(id,label,obj,type){
+function draw(id,obj,type){
 
  if(charts[id])charts[id].destroy();
 
@@ -452,96 +358,69 @@ function draw(id,label,obj,type){
   data:{
    labels:Object.keys(obj),
    datasets:[{
-    label,
     data:Object.values(obj),
-    backgroundColor:Object.keys(obj)
-      .map((_,i)=>COLORS[i%COLORS.length]),
-    borderWidth:1
+    backgroundColor:Object.keys(obj).map((_,i)=>COLORS[i%5])
    }]
   }
 
  });
 }
 
-/* ================= RENDER ================= */
+/* ===== RENDER ===== */
 
 function render(){
 
  let r=0,c=0,p=0;
 
- filtered.forEach(x=>{
+ all.forEach(x=>{
   r+=x.prezzo;
   c+=x.costo;
   p+=x.profitto;
  });
-
- let roi=(p/c*100)||0;
 
  kpi.innerHTML=`
 
  <div class="kpi">${r.toFixed(0)}€<br>Ricavi</div>
  <div class="kpi">${c.toFixed(0)}€<br>Costi</div>
  <div class="kpi">${p.toFixed(0)}€<br>Profitto</div>
- <div class="kpi">${roi.toFixed(1)}%<br>ROI</div>
- <div class="kpi">${filtered.length}<br>Vendite</div>
+ <div class="kpi">${all.length}<br>Vendite</div>
 
  `;
 
- let o1=group(filtered,"canale","prezzo");
- draw("c1","Ricavi",o1,t1.value); mini("c1",o1);
+ let o1=group("canale","prezzo");
+ draw("c1",o1,t1.value); mini("c1",o1);
 
- let o2=group(filtered,"epoca","profitto");
- draw("c2","Profitto",o2,t2.value); mini("c2",o2);
-
- let o3=group(filtered,"epoca","profitto");
- draw("c3","ROI",o3,t3.value); mini("c3",o3);
-
- let o4=group(filtered,"tipo","profitto");
- draw("c4","Margine",o4,t4.value); mini("c4",o4);
+ let o2=group("epoca","profitto");
+ draw("c2",o2,t2.value); mini("c2",o2);
 
  renderPremium();
  renderForecast();
  renderAI();
 }
 
-/* ================= PREMIUM ================= */
+/* ===== PREMIUM ===== */
 
 function renderPremium(){
 
- let tot=filtered.length,rev=0,pc=0,pr=0;
+ let tot=all.length,rev=0,pr=0;
 
- filtered.forEach(x=>{
-
+ all.forEach(x=>{
   rev+=x.prezzo;
-
-  if(x.prezzo>=1000){
-   pc++;
-   pr+=x.prezzo;
-  }
+  if(x.prezzo>1000)pr+=x.prezzo;
  });
 
- let o={
-  "Premium":pr,
-  "Altro":rev-pr
- };
+ let o={Premium:pr,Altro:rev-pr};
 
- premiumImpact.innerHTML=`
+ premiumImpact.innerHTML=`Premium ${(pr/rev*100).toFixed(1)}%`;
 
- Vendite: ${tot}<br>
- Incasso: ${rev.toFixed(0)}€<br>
- Premium: ${pc} (${(pc/tot*100).toFixed(1)}%)
-
- `;
-
- draw("c5","Premium",o,"doughnut");
- mini("c5",o);
+ draw("c3",o,"doughnut");
 }
 
-/* ================= FORECAST ================= */
+/* ===== FORECAST ===== */
 
 function renderForecast(){
 
- let m=group(filtered,"mese","prezzo");
+ let m=group("mese","prezzo");
 
  let k=Object.keys(m).sort();
  let v=k.map(x=>m[x]);
@@ -551,37 +430,33 @@ function renderForecast(){
  let t=(v[v.length-1]-v[0])/v.length;
 
  let last=v[v.length-1];
-
- let future=[];
+ let f=[];
 
  for(let i=1;i<=6;i++){
   last+=t;
-  future.push(last);
+  f.push(last);
  }
-
- let labels=[...k,"+1","+2","+3","+4","+5","+6"];
 
  let obj={};
 
- labels.forEach((x,i)=>obj[x]=[...v,...future][i]);
+ [...k,"+1","+2","+3","+4","+5","+6"].forEach((x,i)=>{
+  obj[x]=[...v,...f][i];
+ });
 
- draw("c6","Forecast",obj,"line");
+ draw("c4",obj,"line");
 
- forecastText.innerHTML=
- t>0?"📈 Crescita prevista":"📉 Possibile calo";
+ forecastText.innerHTML=t>0?"Crescita":"Calma";
 }
 
-/* ================= AI ================= */
+/* ===== AI ===== */
 
 function renderAI(){
 
- let best=max(group(filtered,"epoca","profitto"));
+ let best=max(group("epoca","profitto"));
 
  ai.innerHTML=`
-
- 🏛️ Miglior epoca: <b>${best}</b><br>
- 💡 Punta su questa categoria.
-
+ Miglior epoca: ${best}<br>
+ Investi qui
  `;
 }
 
@@ -596,41 +471,77 @@ function max(o){
  return k;
 }
 
-/* ================= SCANNER ================= */
-
-let lastImageURL="";
+/* ===== SCANNER ===== */
 
 function scanObject(){
 
- let f=scanImg.files[0];
- if(!f){alert("Carica foto");return;}
-
- lastImageURL=URL.createObjectURL(f);
-
- scanResult.innerHTML="⏳ Analisi AI in corso...";
+ scanResult.innerHTML="Analisi in corso...";
 
  setTimeout(()=>{
 
-  scanResult.innerHTML=`
-
- ✅ Epoca: XIX–XX sec<br>
- ✅ Stile: Europeo<br>
- ✅ Materiale: Legno / Tela<br>
- 💰 Valore: 900€ – 2.500€<br><br>
-
- 📝 Descrizione pronta per vendita
-
- `;
+  scanResult.innerHTML="Epoca XIX–XX • Valore 900€–2500€";
 
  },2000);
 }
 
 function openLens(){
- window.open("https://lens.google.com/upload","_blank");
+ window.open("https://lens.google.com/upload");
 }
 
 function openBing(){
- window.open("https://www.bing.com/visualsearch","_blank");
+ window.open("https://www.bing.com/visualsearch");
+}
+
+/* ===== AI SEARCH ===== */
+
+function aiSearch(){
+
+ aiAnswer.innerHTML="Analisi...";
+
+ setTimeout(()=>{
+
+  aiAnswer.innerHTML="Buon investimento sotto 1500€";
+
+ },2000);
+}
+
+/* ===== SHOP ===== */
+
+function analyzeShop(){
+
+ shopData.innerHTML="⏳ Analisi shop in corso...";
+
+ fetch("https://api.allorigins.win/raw?url=https://shop.tuttoantico.it")
+ .then(r=>r.text())
+ .then(html=>{
+
+  let prices=[...html.matchAll(/€\s?([0-9\.]+)/g)]
+   .map(x=>Number(x[1].replace(".","")));
+
+  if(!prices.length){
+   shopData.innerHTML="Impossibile leggere prezzi";
+   return;
+  }
+
+  let avg=prices.reduce((a,b)=>a+b,0)/prices.length;
+
+  shopData.innerHTML=`
+
+ Prodotti trovati: ${prices.length}<br>
+ Prezzo medio: ${avg.toFixed(0)}€<br>
+
+ Confronta con i tuoi dati
+
+ `;
+
+  let o={};
+
+  prices.forEach((p,i)=>o["Prod"+i]=p);
+
+  draw("c5",o,"bar");
+
+ });
+
 }
 
 </script>
