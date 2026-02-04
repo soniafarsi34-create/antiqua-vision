@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>AntiquaVision International</title>
+<title>AntiquaVision Smart Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -27,7 +27,7 @@ header{
 }
 
 .lang{
- margin-top:8px;
+ margin-top:6px;
 }
 
 .container{
@@ -83,7 +83,13 @@ input,select{
  align-items:center;
 }
 
-.small{font-size:12px;color:#aaa}
+.small{
+ font-size:13px;
+ color:#aaa;
+ line-height:1.5;
+}
+
+hr{border:1px solid #222;margin:15px 0}
 
 </style>
 </head>
@@ -91,7 +97,7 @@ input,select{
 <body>
 
 <header>
-<span data-t="title">AntiquaVision — Investment Dashboard</span>
+<span data-t="title">AntiquaVision — Smart Dashboard</span>
 
 <div class="lang">
 <button onclick="setLang('it')">🇮🇹</button>
@@ -107,11 +113,11 @@ input,select{
 
 <div class="card">
 
-<h3 data-t="import">📂 Import File</h3>
+<h3 data-t="import">📂 Importa File</h3>
 
 <input type="file" id="file">
 
-<button onclick="loadFile()" data-t="analyze">Analyze</button>
+<button onclick="loadFile()" data-t="analyze">Analizza</button>
 
 <div id="res"></div>
 
@@ -125,13 +131,35 @@ input,select{
 
 <div class="grid" id="kpi"></div>
 
+<div class="small" data-t="kpi_help">
+
+Ricavi = Incassi totali • Costi = Spese • Profitto = Guadagno • ROI = Rendimento • Vendite = Numero oggetti
+
+</div>
+
+</div>
+
+<!-- GUIDE -->
+
+<div class="card">
+
+<h3>📘 Guida Lettura Dati</h3>
+
+<div class="small" data-t="guide">
+
+ROI >30% = Ottimo • 15–30% = Medio • <15% = Rischio  
+Premium >30% fatturato = Punta su pezzi importanti  
+Volume alto ≠ Profitto alto  
+
+</div>
+
 </div>
 
 <!-- CHARTS -->
 
 <div class="card">
 <div class="flex">
-<h3 data-t="revChannel">📈 Revenue by Channel</h3>
+<h3 data-t="revChannel">📈 Ricavi per Canale</h3>
 <select id="t1" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
 </select>
@@ -141,7 +169,7 @@ input,select{
 
 <div class="card">
 <div class="flex">
-<h3 data-t="profitEra">🏛️ Profit by Era</h3>
+<h3 data-t="profitEra">🏛️ Profitto per Epoca</h3>
 <select id="t2" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
 </select>
@@ -151,7 +179,7 @@ input,select{
 
 <div class="card">
 <div class="flex">
-<h3 data-t="roiEra">📊 ROI by Era</h3>
+<h3 data-t="roiEra">📊 ROI per Epoca</h3>
 <select id="t3" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
@@ -161,7 +189,7 @@ input,select{
 
 <div class="card">
 <div class="flex">
-<h3 data-t="roiType">📊 ROI by Category</h3>
+<h3 data-t="roiType">📊 ROI per Categoria</h3>
 <select id="t4" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
@@ -171,7 +199,7 @@ input,select{
 
 <div class="card">
 <div class="flex">
-<h3 data-t="costPrice">💸 Cost vs Price</h3>
+<h3 data-t="costPrice">💸 Costo vs Prezzo</h3>
 <select id="t5" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
@@ -181,7 +209,7 @@ input,select{
 
 <div class="card">
 <div class="flex">
-<h3 data-t="volumeProfit">📦 Volume vs Profit</h3>
+<h3 data-t="volumeProfit">📦 Volume vs Profitto</h3>
 <select id="t6" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
@@ -189,21 +217,29 @@ input,select{
 <canvas id="c6"></canvas>
 </div>
 
+<!-- PREMIUM -->
+
 <div class="card">
-<div class="flex">
-<h3 data-t="premiumRatio">💎 Premium Sales Ratio</h3>
-<select id="t7" onchange="drawCharts()">
-<option>bar</option><option>pie</option>
-</select>
+
+<h3 data-t="premium">💎 Impatto Vendite Premium (>1000€)</h3>
+
+<div id="premiumImpact"></div>
+
+<div class="small" data-t="premium_help">
+
+Se poche vendite generano molto fatturato → strategia premium vincente.
+
 </div>
+
 <canvas id="c7"></canvas>
+
 </div>
 
 <!-- AI -->
 
 <div class="card">
 
-<h3 data-t="ai">🤖 AI Advisor</h3>
+<h3 data-t="ai">🤖 Consulente AI</h3>
 
 <div id="ai"></div>
 
@@ -220,7 +256,7 @@ let lang="it";
 const TXT={
 
  it:{
-  title:"AntiquaVision — Dashboard Investimenti",
+  title:"AntiquaVision — Smart Dashboard",
   import:"📂 Importa File",
   analyze:"Analizza",
   dashboard:"📊 Dashboard",
@@ -230,12 +266,15 @@ const TXT={
   roiType:"ROI per Categoria",
   costPrice:"Costo vs Prezzo",
   volumeProfit:"Volume vs Profitto",
-  premiumRatio:"Vendite Premium",
-  ai:"🤖 Consulente AI"
+  premium:"Impatto Vendite Premium",
+  ai:"🤖 Consulente AI",
+  guide:"ROI >30% = Ottimo • 15–30% = Medio • <15% = Rischio",
+  kpi_help:"Ricavi = Incassi • Costi = Spese • Profitto = Guadagno • ROI = Rendimento",
+  premium_help:"Se poche vendite portano molto fatturato → punta su premium"
  },
 
  en:{
-  title:"AntiquaVision — Investment Dashboard",
+  title:"AntiquaVision — Smart Dashboard",
   import:"📂 Import File",
   analyze:"Analyze",
   dashboard:"📊 Dashboard",
@@ -245,12 +284,15 @@ const TXT={
   roiType:"ROI by Category",
   costPrice:"Cost vs Price",
   volumeProfit:"Volume vs Profit",
-  premiumRatio:"Premium Sales",
-  ai:"🤖 AI Advisor"
+  premium:"Premium Impact",
+  ai:"🤖 AI Advisor",
+  guide:"ROI >30% = Great • 15–30% = Medium • <15% = Risk",
+  kpi_help:"Revenue = Income • Cost = Expenses • Profit = Earnings • ROI = Return",
+  premium_help:"Few sales = big revenue → premium strategy"
  },
 
  de:{
-  title:"AntiquaVision — Investitionsübersicht",
+  title:"AntiquaVision — Dashboard",
   import:"📂 Datei Importieren",
   analyze:"Analysieren",
   dashboard:"📊 Übersicht",
@@ -260,12 +302,15 @@ const TXT={
   roiType:"ROI nach Kategorie",
   costPrice:"Kosten vs Preis",
   volumeProfit:"Volumen vs Gewinn",
-  premiumRatio:"Premium Verkäufe",
-  ai:"🤖 KI Berater"
+  premium:"Premium Verkäufe",
+  ai:"🤖 KI Berater",
+  guide:"ROI >30% = Sehr gut • <15% = Risiko",
+  kpi_help:"Umsatz • Kosten • Gewinn • ROI",
+  premium_help:"Wenige Verkäufe = hoher Umsatz"
  },
 
  fr:{
-  title:"AntiquaVision — Tableau d’Investissement",
+  title:"AntiquaVision — Tableau",
   import:"📂 Importer Fichier",
   analyze:"Analyser",
   dashboard:"📊 Tableau",
@@ -275,8 +320,11 @@ const TXT={
   roiType:"ROI par Catégorie",
   costPrice:"Coût vs Prix",
   volumeProfit:"Volume vs Profit",
-  premiumRatio:"Ventes Premium",
-  ai:"🤖 Conseiller IA"
+  premium:"Ventes Premium",
+  ai:"🤖 Conseiller IA",
+  guide:"ROI >30% = Excellent • <15% = Risque",
+  kpi_help:"Revenus • Coûts • Profit • ROI",
+  premium_help:"Peu de ventes = gros chiffre"
  }
 
 };
@@ -303,7 +351,7 @@ let charts={};
 function loadFile(){
 
  let f=file.files[0];
- if(!f) return alert("Upload file");
+ if(!f) return alert("Carica file");
 
  let ext=f.name.split(".").pop().toLowerCase();
 
@@ -347,7 +395,7 @@ function prepare(rows){
 
  filtered=[...all];
 
- res.innerHTML="✔️ "+all.length+" records";
+ res.innerHTML="✔️ "+all.length+" record";
 
  render();
 }
@@ -383,8 +431,35 @@ function render(){
 
  if(!filtered.length)return;
 
+ renderKPI();
  drawCharts();
  renderAI();
+ renderPremium();
+}
+
+/* ================= KPI ================= */
+
+function renderKPI(){
+
+ let r=0,c=0,p=0;
+
+ filtered.forEach(x=>{
+  r+=x.prezzo;
+  c+=x.costo;
+  p+=x.profitto;
+ });
+
+ let roi=(p/c*100)||0;
+
+ kpi.innerHTML=`
+
+ <div class="kpi"><b>${r.toFixed(0)}€</b><br>Ricavi</div>
+ <div class="kpi"><b>${c.toFixed(0)}€</b><br>Costi</div>
+ <div class="kpi"><b>${p.toFixed(0)}€</b><br>Profitto</div>
+ <div class="kpi"><b>${roi.toFixed(1)}%</b><br>ROI</div>
+ <div class="kpi"><b>${filtered.length}</b><br>Vendite</div>
+
+ `;
 }
 
 /* ================= CHARTS ================= */
@@ -400,8 +475,10 @@ function drawCharts(){
  draw("c5","Cost vs Price",costVsPrice(),t5.value);
  draw("c6","Volume vs Profit",volumeProfit(),t6.value);
 
- draw("c7","Premium",premiumRatio(),t7.value);
+ drawPremiumChart();
 }
+
+/* ================= DRAW ================= */
 
 function draw(id,label,obj,type){
 
@@ -491,20 +568,66 @@ function volumeProfit(){
  return o;
 }
 
-function premiumRatio(){
+/* ================= PREMIUM ================= */
 
- let p=0,n=0;
+function analyzePremium(){
+
+ let totalRev=0,total=filtered.length;
+ let pCount=0,pRev=0;
 
  filtered.forEach(x=>{
 
-  if(x.prezzo>=1000)p++;
-  n++;
+  totalRev+=x.prezzo;
+
+  if(x.prezzo>=1000){
+   pCount++;
+   pRev+=x.prezzo;
+  }
  });
 
  return {
-  "Premium >1000€":p,
-  "Other":n-p
+  total,
+  totalRev,
+  pCount,
+  pRev,
+  percCount:(pCount/total*100)||0,
+  percRev:(pRev/totalRev*100)||0
  };
+}
+
+function renderPremium(){
+
+ let p=analyzePremium();
+
+ let strategy="";
+
+ if(p.percRev>40)strategy="🔥 Premium dominante";
+ else if(p.percRev>25)strategy="✅ Premium importante";
+ else strategy="⚠️ Meglio fascia media";
+
+ premiumImpact.innerHTML=`
+
+ 📦 Vendite totali: <b>${p.total}</b><br>
+ 💰 Fatturato: <b>${p.totalRev.toFixed(0)}€</b><br><br>
+
+ 💎 >1000€: <b>${p.pCount}</b> (${p.percCount.toFixed(1)}%)<br>
+ 💎 Incasso: <b>${p.pRev.toFixed(0)}€</b> (${p.percRev.toFixed(1)}%)<br><br>
+
+ 📌 Strategia: <b>${strategy}</b>
+
+ `;
+}
+
+function drawPremiumChart(){
+
+ let p=analyzePremium();
+
+ let o={
+  "Premium >1000€":p.pRev,
+  "Altri":p.totalRev-p.pRev
+ };
+
+ draw("c7","Premium Revenue",o,"pie");
 }
 
 /* ================= AI ================= */
@@ -513,16 +636,13 @@ function renderAI(){
 
  let bestROI=max(roiBy("epoca"));
  let bestCat=max(roiBy("tipo"));
- let premium=Object.values(premiumRatio())[0];
 
  ai.innerHTML=`
 
- 💎 Best ROI Era: <b>${bestROI}</b><br>
- 🏺 Best Category: <b>${bestCat}</b><br>
- ⭐ Premium Sales: <b>${premium}</b><br>
+ 💎 ROI Top: <b>${bestROI}</b><br>
+ 🏺 Categoria Top: <b>${bestCat}</b><br>
 
- 📌 Strategy:
- Focus on ${bestROI} and ${bestCat}
+ 💡 Concentrati su questi settori.
 
  `;
 }
