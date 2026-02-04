@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>AntiquaVision Ultimate</title>
+<title>AntiquaVision Master</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -105,16 +105,7 @@ canvas{margin-top:12px}
 <body>
 
 <header>
-
-AntiquaVision Ultimate Dashboard
-
-<div style="margin-top:10px">
-<button onclick="setLang('it')">🇮🇹</button>
-<button onclick="setLang('en')">🇬🇧</button>
-<button onclick="setLang('de')">🇩🇪</button>
-<button onclick="setLang('fr')">🇫🇷</button>
-</div>
-
+AntiquaVision — Master Dashboard
 </header>
 
 <div class="container">
@@ -140,27 +131,6 @@ AntiquaVision Ultimate Dashboard
 <h3>📊 KPI Principali</h3>
 
 <div class="grid" id="kpi"></div>
-
-<div class="small">
-Ricavi • Costi • Profitto • ROI • Volume
-</div>
-
-</div>
-
-<!-- GUIDE -->
-
-<div class="card">
-
-<h3>📘 Come leggere i dati</h3>
-
-<div class="small">
-
-ROI &gt;30% = Ottimo<br>
-15–30% = Medio<br>
-&lt;15% = Rischio<br>
-Premium &gt;30% = Forte leva<br>
-
-</div>
 
 </div>
 
@@ -205,7 +175,7 @@ Premium &gt;30% = Forte leva<br>
 
 <h3>🛒 Analisi Shop</h3>
 
-<button onclick="analyzeShop()">Analizza shop.tuttoantico.it</button>
+<button onclick="analyzeShop()">Analizza shop</button>
 
 <div id="shopData" class="small"></div>
 
@@ -227,7 +197,7 @@ Premium &gt;30% = Forte leva<br>
 
 <script>
 
-/* ===== DATA ===== */
+/* ================= DATA ================= */
 
 let all=[];
 let charts={};
@@ -235,10 +205,10 @@ let charts={};
 const COLORS=[
  "#4f9cff","#3ad29f","#ff6b6b",
  "#9b7bff","#ffd966","#ff9f43",
- "#00cec9","#fd79a8"
+ "#00cec9","#fd79a8","#6c5ce7"
 ];
 
-/* ===== UTILS ===== */
+/* ================= UTILS ================= */
 
 function num(v){
  return Number(String(v||"")
@@ -247,7 +217,7 @@ function num(v){
  .replace(/\s/g,""))||0;
 }
 
-/* ===== LOAD ===== */
+/* ================= LOAD ================= */
 
 function loadFile(){
 
@@ -278,7 +248,7 @@ function loadFile(){
  }
 }
 
-/* ===== PREPARE ===== */
+/* ================= PREPARE ================= */
 
 function prepare(rows){
 
@@ -289,18 +259,19 @@ function prepare(rows){
   canale:r["luogo di vendita"]||"",
   paese:r["Nazionalita acquirente"]||"",
   mese:r["MeseNorm"]||"",
+
   prezzo:num(r["prezzo di vendita"]),
   costo:num(r["acquisto"]),
   profitto:num(r["profitto"])
 
  }));
 
- res.innerHTML="✔️ "+all.length+" record";
+ res.innerHTML="✔️ "+all.length+" record caricati";
 
  renderAll();
 }
 
-/* ===== GROUP ===== */
+/* ================= GROUP ================= */
 
 function group(k,v){
 
@@ -314,7 +285,27 @@ function group(k,v){
  return o;
 }
 
-/* ===== DRAW ===== */
+function avgGroup(k,v){
+
+ let o={},c={};
+
+ all.forEach(x=>{
+  if(!x[k])return;
+
+  o[x[k]]=(o[x[k]]||0)+x[v];
+  c[x[k]]=(c[x[k]]||0)+1;
+ });
+
+ let r={};
+
+ for(let i in o){
+  r[i]=o[i]/c[i];
+ }
+
+ return r;
+}
+
+/* ================= DRAW ================= */
 
 function draw(id,title,obj,type){
 
@@ -330,35 +321,15 @@ function draw(id,title,obj,type){
     label:title,
     data:Object.values(obj),
     backgroundColor:Object.keys(obj)
-      .map((_,i)=>COLORS[i%COLORS.length])
+      .map((_,i)=>COLORS[i%COLORS.length]),
+    borderWidth:1
    }]
   }
 
  });
-
 }
 
-/* ===== MINI ===== */
-
-function mini(obj){
-
- let v=Object.values(obj);
- let k=Object.keys(obj);
-
- if(!v.length)return "";
-
- let max=Math.max(...v);
- let min=Math.min(...v);
- let avg=v.reduce((a,b)=>a+b,0)/v.length;
-
- return `
- ⭐ ${k[v.indexOf(max)]}
- ⚠️ ${k[v.indexOf(min)]}
- 📊 ${avg.toFixed(0)}
- `;
-}
-
-/* ===== KPI ===== */
+/* ================= KPI ================= */
 
 function renderKPI(){
 
@@ -383,39 +354,51 @@ function renderKPI(){
  `;
 }
 
-/* ===== CHARTS ===== */
+/* ================= CHARTS ================= */
 
 function renderCharts(){
 
- let list=[
+ const list=[
 
  ["canale","prezzo","Ricavi per Canale","bar"],
+ ["canale","profitto","Profitto per Canale","bar"],
+
+ ["epoca","prezzo","Ricavi per Epoca","bar"],
  ["epoca","profitto","Profitto per Epoca","bar"],
- ["epoca","profitto","ROI per Epoca","line"],
- ["tipo","profitto","Profitto per Categoria","bar"],
- ["tipo","prezzo","Prezzo per Categoria","bar"],
+
+ ["tipo","prezzo","Ricavi per Tipologia","bar"],
+ ["tipo","profitto","Profitto per Tipologia","bar"],
+
  ["paese","prezzo","Ricavi per Paese","bar"],
  ["paese","profitto","Profitto per Paese","bar"],
+
  ["mese","prezzo","Vendite Mensili","line"],
- ["mese","profitto","Profitto Mensile","line"]
+ ["mese","profitto","Profitto Mensile","line"],
+
+ ["epoca","profitto","ROI per Epoca","line"],
+ ["tipo","profitto","ROI per Tipologia","line"],
+
+ ["canale","profitto","ROI per Canale","line"],
+
+ ["tipo","prezzo","Prezzo Totale per Tipo","bar"],
+
+ ["epoca","prezzo","Prezzo Totale per Epoca","bar"]
 
  ];
 
- chartsBox.innerHTML="";
+ charts.innerHTML="";
 
  list.forEach((x,i)=>{
 
   let id="c"+i;
 
-  chartsBox.innerHTML+=`
+  charts.innerHTML+=`
 
   <div class="card">
 
   <h3>${x[2]}</h3>
 
   <canvas id="${id}"></canvas>
-
-  <div class="small" id="${id}m"></div>
 
   </div>
 
@@ -425,28 +408,63 @@ function renderCharts(){
 
   draw(id,x[2],o,x[3]);
 
-  document.getElementById(id+"m").innerHTML=mini(o);
-
  });
+
+ /* Prezzo Medio */
+
+ let avg1=avgGroup("epoca","prezzo");
+ addExtra("Prezzo Medio per Epoca",avg1,"bar");
+
+ let avg2=avgGroup("canale","prezzo");
+ addExtra("Prezzo Medio per Canale",avg2,"bar");
+
+ /* Premium */
+
+ let prem=analyzePremium();
+ addExtra("Premium >1000€",prem,"doughnut");
 }
 
-/* ===== PREMIUM ===== */
+/* ================= EXTRA ================= */
 
-function renderPremium(){
+function addExtra(title,obj,type){
+
+ let id="x"+Math.random().toString(36).substr(2,6);
+
+ charts.innerHTML+=`
+
+ <div class="card">
+
+ <h3>${title}</h3>
+
+ <canvas id="${id}"></canvas>
+
+ </div>
+
+ `;
+
+ draw(id,title,obj,type);
+}
+
+/* ================= PREMIUM ================= */
+
+function analyzePremium(){
 
  let rev=0,pr=0;
 
  all.forEach(x=>{
   rev+=x.prezzo;
-  if(x.prezzo>1000)pr+=x.prezzo;
+  if(x.prezzo>=1000)pr+=x.prezzo;
  });
 
- return (pr/rev*100)||0;
+ return{
+  "Premium >1000€":pr,
+  "Altri":rev-pr
+ };
 }
 
-/* ===== FORECAST ===== */
+/* ================= FORECAST ================= */
 
-function renderForecast(){
+function forecast(){
 
  let m=group("mese","prezzo");
 
@@ -459,7 +477,7 @@ function renderForecast(){
  return t>0?"📈 Crescita":"📉 Calo";
 }
 
-/* ===== AI ===== */
+/* ================= AI ================= */
 
 function renderAI(){
 
@@ -467,12 +485,11 @@ function renderAI(){
 
  ai.innerHTML=`
 
- Miglior epoca: <b>${best}</b><br>
- Premium: ${renderPremium().toFixed(1)}%<br>
- Trend: ${renderForecast()}<br>
+ 🏛️ Miglior epoca: <b>${best}</b><br>
+ 📊 Trend: ${forecast()}<br><br>
 
- 💡 Suggerimento:
- Investi su epoche con ROI alto
+ 💡 Consiglio:
+ Concentrati sulle epoche con ROI alto
 
  `;
 }
@@ -488,7 +505,7 @@ function max(o){
  return k;
 }
 
-/* ===== MAIN ===== */
+/* ================= MAIN ================= */
 
 function renderAll(){
 
@@ -499,7 +516,7 @@ function renderAll(){
  renderAI();
 }
 
-/* ===== SCANNER ===== */
+/* ================= SCANNER ================= */
 
 function scanObject(){
 
@@ -520,7 +537,7 @@ function openBing(){
  window.open("https://www.bing.com/visualsearch");
 }
 
-/* ===== AI SEARCH ===== */
+/* ================= AI SEARCH ================= */
 
 function aiSearch(){
 
@@ -533,7 +550,7 @@ function aiSearch(){
  },2000);
 }
 
-/* ===== SHOP ===== */
+/* ================= SHOP ================= */
 
 function analyzeShop(){
 
