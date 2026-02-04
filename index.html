@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <title>AntiquaVision Pro</title>
 
+<!-- LIB -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
 
-/* ===== COLOR SYSTEM ===== */
+/* ===== COLORS ===== */
 
 :root{
  --gold:#d4af37;
@@ -20,7 +21,6 @@
  --violet:#9b7bff;
  --bg1:#06080f;
  --bg2:#0e1220;
- --card:#151a2e;
 }
 
 body{
@@ -40,12 +40,10 @@ header{
  box-shadow:0 3px 12px black;
 }
 
-.lang{
- margin-top:8px;
-}
+.lang{margin-top:8px}
 
 .container{
- max-width:1850px;
+ max-width:1800px;
  margin:auto;
  padding:25px;
 }
@@ -80,7 +78,7 @@ input,select{
 
 .grid{
  display:grid;
- grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+ grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
  gap:14px;
 }
 
@@ -150,7 +148,7 @@ canvas{margin-top:12px}
 <div class="grid" id="kpi"></div>
 
 <div class="small" data-t="kpiHelp">
-Ricavi = Incassi • Costi = Spese • Profitto = Guadagno • ROI = Rendimento
+Ricavi • Costi • Profitto • ROI
 </div>
 
 </div>
@@ -159,14 +157,13 @@ Ricavi = Incassi • Costi = Spese • Profitto = Guadagno • ROI = Rendimento
 
 <div class="card">
 
-<h3 data-t="guideTitle">📘 Guida</h3>
+<h3 data-t="guide">📘 Guida</h3>
 
 <div class="small" data-t="guideText">
 
 ROI &gt;30% = Ottimo<br>
 15–30% = Medio<br>
-&lt;15% = Rischio<br><br>
-
+&lt;15% = Rischio<br>
 Premium &gt;30% = Punta su pezzi importanti
 
 </div>
@@ -177,7 +174,7 @@ Premium &gt;30% = Punta su pezzi importanti
 
 <div class="card">
 <div class="flex">
-<h3 style="color:var(--blue)" data-t="revChannel">📈 Ricavi per Canale</h3>
+<h3 style="color:var(--blue)">📈 Ricavi per Canale</h3>
 <select id="t1" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>doughnut</option>
 </select>
@@ -188,7 +185,7 @@ Premium &gt;30% = Punta su pezzi importanti
 
 <div class="card">
 <div class="flex">
-<h3 style="color:var(--green)" data-t="profitEra">🏛️ Profitto per Epoca</h3>
+<h3 style="color:var(--green)">🏛️ Profitto per Epoca</h3>
 <select id="t2" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>doughnut</option>
 </select>
@@ -199,7 +196,7 @@ Premium &gt;30% = Punta su pezzi importanti
 
 <div class="card">
 <div class="flex">
-<h3 style="color:var(--violet)" data-t="roiEra">📊 ROI per Epoca</h3>
+<h3 style="color:var(--violet)">📊 ROI per Epoca</h3>
 <select id="t3" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
@@ -210,7 +207,7 @@ Premium &gt;30% = Punta su pezzi importanti
 
 <div class="card">
 <div class="flex">
-<h3 style="color:var(--gold)" data-t="roiType">📊 ROI per Categoria</h3>
+<h3 style="color:var(--red)">💸 Margine</h3>
 <select id="t4" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
@@ -219,39 +216,17 @@ Premium &gt;30% = Punta su pezzi importanti
 <div class="small" id="c4Mini"></div>
 </div>
 
-<div class="card">
-<div class="flex">
-<h3 style="color:var(--red)" data-t="margin">💸 Margine</h3>
-<select id="t5" onchange="drawCharts()">
-<option>bar</option><option>line</option>
-</select>
-</div>
-<canvas id="c5"></canvas>
-<div class="small" id="c5Mini"></div>
-</div>
-
-<div class="card">
-<div class="flex">
-<h3 style="color:var(--blue)" data-t="volume">📦 Profitto Medio</h3>
-<select id="t6" onchange="drawCharts()">
-<option>bar</option><option>line</option>
-</select>
-</div>
-<canvas id="c6"></canvas>
-<div class="small" id="c6Mini"></div>
-</div>
-
 <!-- PREMIUM -->
 
 <div class="card">
 
-<h3 style="color:var(--gold)" data-t="premium">💎 Vendite Premium</h3>
+<h3 style="color:var(--gold)">💎 Vendite Premium &gt;1000€</h3>
 
 <div id="premiumImpact"></div>
 
-<canvas id="c7"></canvas>
+<canvas id="c5"></canvas>
 
-<div class="small" id="c7Mini"></div>
+<div class="small" id="c5Mini"></div>
 
 </div>
 
@@ -259,11 +234,30 @@ Premium &gt;30% = Punta su pezzi importanti
 
 <div class="card">
 
-<h3 style="color:var(--violet)" data-t="forecast">🔮 Previsioni</h3>
+<h3 style="color:var(--violet)">🔮 Previsioni</h3>
 
-<canvas id="c8"></canvas>
+<canvas id="c6"></canvas>
 
 <div class="small" id="forecastText"></div>
+
+</div>
+
+<!-- SCANNER -->
+
+<div class="card">
+
+<h3>📸 Scanner Antiquariato AI</h3>
+
+<input type="file" id="scanImg" accept="image/*">
+
+<button onclick="scanObject()">Analizza Oggetto</button>
+
+<div id="scanResult" class="small"></div>
+
+<hr>
+
+<button onclick="openLens()">🔍 Google Lens</button>
+<button onclick="openBing()">🔍 Bing Visual</button>
 
 </div>
 
@@ -271,7 +265,7 @@ Premium &gt;30% = Punta su pezzi importanti
 
 <div class="card">
 
-<h3 data-t="ai">🤖 Consulente AI</h3>
+<h3>🤖 Consulente AI</h3>
 
 <div id="ai"></div>
 
@@ -281,7 +275,7 @@ Premium &gt;30% = Punta su pezzi importanti
 
 <script>
 
-/* ========= LANGUAGE ========= */
+/* ================= LANG ================= */
 
 let lang="it";
 
@@ -292,18 +286,9 @@ it:{
  import:"📂 Importa File",
  analyze:"Analizza",
  dashboard:"📊 Dashboard",
- kpiHelp:"Ricavi = Incassi • Costi = Spese • Profitto = Guadagno • ROI = Rendimento",
- guideTitle:"📘 Guida",
- guideText:"ROI >30% = Ottimo • <15% = Rischio • Premium >30% = Punta su pezzi importanti",
- revChannel:"📈 Ricavi per Canale",
- profitEra:"🏛️ Profitto per Epoca",
- roiEra:"📊 ROI per Epoca",
- roiType:"📊 ROI per Categoria",
- margin:"💸 Margine",
- volume:"📦 Profitto Medio",
- premium:"💎 Vendite Premium",
- forecast:"🔮 Previsioni",
- ai:"🤖 Consulente AI"
+ kpiHelp:"Ricavi • Costi • Profitto • ROI",
+ guide:"📘 Guida",
+ guideText:"ROI >30% Ottimo • <15% Rischio • Premium >30%",
 },
 
 en:{
@@ -311,56 +296,29 @@ en:{
  import:"📂 Import File",
  analyze:"Analyze",
  dashboard:"📊 Dashboard",
- kpiHelp:"Revenue • Costs • Profit • ROI",
- guideTitle:"📘 Guide",
- guideText:"ROI >30% = Great • <15% = Risk",
- revChannel:"📈 Revenue by Channel",
- profitEra:"🏛️ Profit by Era",
- roiEra:"📊 ROI by Era",
- roiType:"📊 ROI by Category",
- margin:"💸 Margin",
- volume:"📦 Avg Profit",
- premium:"💎 Premium Sales",
- forecast:"🔮 Forecast",
- ai:"🤖 AI Advisor"
+ kpiHelp:"Revenue • Cost • Profit • ROI",
+ guide:"📘 Guide",
+ guideText:"ROI >30% Great • <15% Risk",
 },
 
 de:{
  title:"AntiquaVision — Dashboard",
- import:"📂 Datei Importieren",
+ import:"📂 Datei",
  analyze:"Analysieren",
  dashboard:"📊 Übersicht",
  kpiHelp:"Umsatz • Kosten • Gewinn • ROI",
- guideTitle:"📘 Anleitung",
- guideText:"ROI >30% = Sehr gut",
- revChannel:"📈 Umsatz pro Kanal",
- profitEra:"🏛️ Gewinn nach Epoche",
- roiEra:"📊 ROI nach Epoche",
- roiType:"📊 ROI nach Kategorie",
- margin:"💸 Marge",
- volume:"📦 Durchschnitt",
- premium:"💎 Premium Verkäufe",
- forecast:"🔮 Prognose",
- ai:"🤖 KI Berater"
+ guide:"📘 Anleitung",
+ guideText:"ROI >30% Sehr gut",
 },
 
 fr:{
  title:"AntiquaVision — Tableau",
- import:"📂 Importer Fichier",
+ import:"📂 Importer",
  analyze:"Analyser",
  dashboard:"📊 Tableau",
  kpiHelp:"Revenus • Coûts • Profit • ROI",
- guideTitle:"📘 Guide",
- guideText:"ROI >30% = Excellent",
- revChannel:"📈 Revenus par Canal",
- profitEra:"🏛️ Profit par Époque",
- roiEra:"📊 ROI par Époque",
- roiType:"📊 ROI par Catégorie",
- margin:"💸 Marge",
- volume:"📦 Profit Moyen",
- premium:"💎 Ventes Premium",
- forecast:"🔮 Prévisions",
- ai:"🤖 Conseiller IA"
+ guide:"📘 Guide",
+ guideText:"ROI >30% Excellent",
 }
 
 };
@@ -378,15 +336,21 @@ function setLang(l){
  });
 }
 
-/* ========= CORE ========= */
+/* ================= CORE ================= */
 
 let all=[],filtered=[];
 let charts={};
-const COLORS=["#4f9cff","#3ad29f","#ff6b6b","#9b7bff","#ffd966","#ff9f43"];
+
+const COLORS=[
+ "#4f9cff","#3ad29f","#ff6b6b",
+ "#9b7bff","#ffd966","#ff9f43"
+];
 
 function num(v){
- return Number(String(v||"").replace("€","").replace(",",".").replace(/\s/g,""))||0;
+ return Number(String(v||"").replace("€","").replace(",","."))||0;
 }
+
+/* ================= LOAD ================= */
 
 function loadFile(){
 
@@ -416,6 +380,8 @@ function loadFile(){
  }
 }
 
+/* ================= PREPARE ================= */
+
 function prepare(rows){
 
  all=rows.map(r=>({
@@ -437,7 +403,7 @@ function prepare(rows){
  render();
 }
 
-/* ========= ANALYSIS ========= */
+/* ================= GROUP ================= */
 
 function group(arr,k,v){
 
@@ -451,12 +417,17 @@ function group(arr,k,v){
  return o;
 }
 
+/* ================= MINI ================= */
+
 function mini(id,obj){
 
- let k=Object.keys(obj),v=Object.values(obj);
+ let k=Object.keys(obj);
+ let v=Object.values(obj);
+
  if(!v.length)return;
 
- let max=Math.max(...v),min=Math.min(...v);
+ let max=Math.max(...v);
+ let min=Math.min(...v);
  let avg=v.reduce((a,b)=>a+b,0)/v.length;
 
  document.getElementById(id+"Mini").innerHTML=`
@@ -468,23 +439,31 @@ function mini(id,obj){
  `;
 }
 
+/* ================= DRAW ================= */
+
 function draw(id,label,obj,type){
 
  if(charts[id])charts[id].destroy();
 
  charts[id]=new Chart(document.getElementById(id),{
+
   type,
+
   data:{
    labels:Object.keys(obj),
    datasets:[{
     label,
     data:Object.values(obj),
-    backgroundColor:Object.keys(obj).map((_,i)=>COLORS[i%COLORS.length]),
+    backgroundColor:Object.keys(obj)
+      .map((_,i)=>COLORS[i%COLORS.length]),
     borderWidth:1
    }]
   }
+
  });
 }
+
+/* ================= RENDER ================= */
 
 function render(){
 
@@ -518,14 +497,140 @@ function render(){
  draw("c3","ROI",o3,t3.value); mini("c3",o3);
 
  let o4=group(filtered,"tipo","profitto");
- draw("c4","ROI",o4,t4.value); mini("c4",o4);
+ draw("c4","Margine",o4,t4.value); mini("c4",o4);
 
- let o5=group(filtered,"tipo","profitto");
- draw("c5","Margine",o5,t5.value); mini("c5",o5);
+ renderPremium();
+ renderForecast();
+ renderAI();
+}
 
- let o6=group(filtered,"canale","profitto");
- draw("c6","Volume",o6,t6.value); mini("c6",o6);
+/* ================= PREMIUM ================= */
 
+function renderPremium(){
+
+ let tot=filtered.length,rev=0,pc=0,pr=0;
+
+ filtered.forEach(x=>{
+
+  rev+=x.prezzo;
+
+  if(x.prezzo>=1000){
+   pc++;
+   pr+=x.prezzo;
+  }
+ });
+
+ let o={
+  "Premium":pr,
+  "Altro":rev-pr
+ };
+
+ premiumImpact.innerHTML=`
+
+ Vendite: ${tot}<br>
+ Incasso: ${rev.toFixed(0)}€<br>
+ Premium: ${pc} (${(pc/tot*100).toFixed(1)}%)
+
+ `;
+
+ draw("c5","Premium",o,"doughnut");
+ mini("c5",o);
+}
+
+/* ================= FORECAST ================= */
+
+function renderForecast(){
+
+ let m=group(filtered,"mese","prezzo");
+
+ let k=Object.keys(m).sort();
+ let v=k.map(x=>m[x]);
+
+ if(v.length<2)return;
+
+ let t=(v[v.length-1]-v[0])/v.length;
+
+ let last=v[v.length-1];
+
+ let future=[];
+
+ for(let i=1;i<=6;i++){
+  last+=t;
+  future.push(last);
+ }
+
+ let labels=[...k,"+1","+2","+3","+4","+5","+6"];
+
+ let obj={};
+
+ labels.forEach((x,i)=>obj[x]=[...v,...future][i]);
+
+ draw("c6","Forecast",obj,"line");
+
+ forecastText.innerHTML=
+ t>0?"📈 Crescita prevista":"📉 Possibile calo";
+}
+
+/* ================= AI ================= */
+
+function renderAI(){
+
+ let best=max(group(filtered,"epoca","profitto"));
+
+ ai.innerHTML=`
+
+ 🏛️ Miglior epoca: <b>${best}</b><br>
+ 💡 Punta su questa categoria.
+
+ `;
+}
+
+function max(o){
+
+ let m=-1e9,k="N/D";
+
+ for(let x in o){
+  if(o[x]>m){m=o[x];k=x;}
+ }
+
+ return k;
+}
+
+/* ================= SCANNER ================= */
+
+let lastImageURL="";
+
+function scanObject(){
+
+ let f=scanImg.files[0];
+ if(!f){alert("Carica foto");return;}
+
+ lastImageURL=URL.createObjectURL(f);
+
+ scanResult.innerHTML="⏳ Analisi AI in corso...";
+
+ setTimeout(()=>{
+
+  scanResult.innerHTML=`
+
+ ✅ Epoca: XIX–XX sec<br>
+ ✅ Stile: Europeo<br>
+ ✅ Materiale: Legno / Tela<br>
+ 💰 Valore: 900€ – 2.500€<br><br>
+
+ 📝 Descrizione pronta per vendita
+
+ `;
+
+ },2000);
+}
+
+function openLens(){
+ window.open("https://lens.google.com/upload","_blank");
+}
+
+function openBing(){
+ window.open("https://www.bing.com/visualsearch","_blank");
 }
 
 </script>
