@@ -2,88 +2,97 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>AntiquaVision Pro Dashboard</title>
+<title>AntiquaVision Visual Pro</title>
 
-<!-- LIB -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
 
-/* ===== DESIGN ===== */
+/* ===== COLOR SYSTEM ===== */
+
+:root{
+ --gold:#d4af37;
+ --blue:#4f9cff;
+ --green:#3ad29f;
+ --red:#ff6b6b;
+ --violet:#9b7bff;
+ --bg1:#06080f;
+ --bg2:#0e1220;
+ --card:#151a2e;
+}
 
 body{
  margin:0;
- background:linear-gradient(180deg,#07090f,#0b0e14);
+ background:linear-gradient(180deg,var(--bg1),var(--bg2));
  color:#eee;
  font-family:"Segoe UI",Arial;
 }
 
 header{
- background:linear-gradient(90deg,#111,#1a1f2e);
+ background:linear-gradient(90deg,#0c1020,#1a2040);
  padding:18px;
  text-align:center;
- color:gold;
+ color:var(--gold);
  font-size:26px;
  font-weight:700;
  letter-spacing:1px;
- box-shadow:0 3px 10px black;
-}
-
-.lang{
- margin-top:8px;
+ box-shadow:0 3px 12px black;
 }
 
 .container{
- max-width:1800px;
+ max-width:1850px;
  margin:auto;
  padding:25px;
 }
 
 .card{
- background:linear-gradient(180deg,#141826,#151922);
+ background:linear-gradient(180deg,#141a33,#12172a);
  padding:22px;
- border-radius:14px;
- margin-bottom:22px;
- box-shadow:0 0 15px rgba(0,0,0,.4);
+ border-radius:16px;
+ margin-bottom:24px;
+ box-shadow:0 0 20px rgba(0,0,0,.5);
+ border:1px solid #1f2750;
 }
 
 button{
- background:linear-gradient(90deg,gold,#ffcc33);
+ background:linear-gradient(90deg,var(--gold),#ffd966);
  border:none;
- padding:7px 15px;
- border-radius:8px;
+ padding:8px 16px;
+ border-radius:10px;
  font-weight:700;
  cursor:pointer;
  transition:.2s;
+ color:#000;
 }
 
 button:hover{
- transform:scale(1.05);
+ transform:scale(1.07);
+ box-shadow:0 0 10px gold;
 }
 
 input,select{
  width:100%;
- padding:7px;
+ padding:8px;
  margin:4px 0;
- background:#0b0e14;
+ background:#080c18;
  color:white;
- border:1px solid #333;
- border-radius:6px;
+ border:1px solid #2a3366;
+ border-radius:8px;
 }
 
 .grid{
  display:grid;
- grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
  gap:14px;
 }
 
 .kpi{
- background:#0b0e14;
- border:1px solid #333;
- padding:14px;
- border-radius:10px;
+ background:#070b18;
+ border:1px solid #2a3366;
+ padding:15px;
+ border-radius:12px;
  text-align:center;
  font-size:15px;
 }
@@ -96,18 +105,13 @@ input,select{
 
 .small{
  font-size:13px;
- color:#bbb;
- line-height:1.5;
+ color:#b8c0ff;
+ line-height:1.6;
  margin-top:8px;
 }
 
 canvas{
- margin-top:10px;
-}
-
-hr{
- border:1px solid #222;
- margin:15px 0;
+ margin-top:12px;
 }
 
 </style>
@@ -116,23 +120,14 @@ hr{
 <body>
 
 <header>
-AntiquaVision — Professional Business Intelligence
-
-<div class="lang">
-<button onclick="setLang('it')">🇮🇹</button>
-<button onclick="setLang('en')">🇬🇧</button>
-<button onclick="setLang('de')">🇩🇪</button>
-<button onclick="setLang('fr')">🇫🇷</button>
-</div>
+AntiquaVision — Visual Business Intelligence
 </header>
 
 <div class="container">
 
-<!-- IMPORT -->
-
 <div class="card">
 
-<h3>📂 Importa File Excel / CSV</h3>
+<h3>📂 Importa File</h3>
 
 <input type="file" id="file">
 
@@ -142,118 +137,121 @@ AntiquaVision — Professional Business Intelligence
 
 </div>
 
-<!-- KPI -->
-
 <div class="card">
 
-<h3>📊 Dashboard Generale</h3>
+<h3>📊 Dashboard</h3>
 
 <div class="grid" id="kpi"></div>
-
-<div class="small">
-Ricavi = Incassi • Costi = Spese • Profitto = Guadagno • ROI = Rendimento
-</div>
-
-</div>
-
-<!-- GUIDE -->
-
-<div class="card">
-
-<h3>📘 Guida Strategica</h3>
-
-<div class="small">
-
-ROI &gt;30% = Ottimo investimento<br>
-15–30% = Migliorabile<br>
-&lt;15% = Rischio<br><br>
-
-Premium &gt;30% fatturato = Punta su opere importanti<br>
-Volume ≠ Profitto
-
-</div>
 
 </div>
 
 <!-- CHARTS -->
 
-<!-- RICAVI -->
 <div class="card">
+
 <div class="flex">
-<h3>📈 Ricavi per Canale</h3>
+<h3 style="color:var(--blue)">📈 Ricavi per Canale</h3>
+
 <select id="t1" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>doughnut</option>
 </select>
-</div>
-<canvas id="c1"></canvas>
-<div class="small" id="c1Mini"></div>
+
 </div>
 
-<!-- PROFITTO -->
+<canvas id="c1"></canvas>
+
+<div class="small" id="c1Mini"></div>
+
+</div>
+
 <div class="card">
+
 <div class="flex">
-<h3>🏛️ Profitto per Epoca</h3>
+<h3 style="color:var(--green)">🏛️ Profitto per Epoca</h3>
+
 <select id="t2" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>doughnut</option>
 </select>
-</div>
-<canvas id="c2"></canvas>
-<div class="small" id="c2Mini"></div>
+
 </div>
 
-<!-- ROI EPOCA -->
+<canvas id="c2"></canvas>
+
+<div class="small" id="c2Mini"></div>
+
+</div>
+
 <div class="card">
+
 <div class="flex">
-<h3>📊 ROI per Epoca</h3>
+<h3 style="color:var(--violet)">📊 ROI per Epoca</h3>
+
 <select id="t3" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
-</div>
-<canvas id="c3"></canvas>
-<div class="small" id="c3Mini"></div>
+
 </div>
 
-<!-- ROI TIPO -->
+<canvas id="c3"></canvas>
+
+<div class="small" id="c3Mini"></div>
+
+</div>
+
 <div class="card">
+
 <div class="flex">
-<h3>📊 ROI per Categoria</h3>
+<h3 style="color:var(--gold)">📊 ROI per Categoria</h3>
+
 <select id="t4" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
-</div>
-<canvas id="c4"></canvas>
-<div class="small" id="c4Mini"></div>
+
 </div>
 
-<!-- COSTI -->
+<canvas id="c4"></canvas>
+
+<div class="small" id="c4Mini"></div>
+
+</div>
+
 <div class="card">
+
 <div class="flex">
-<h3>💸 Margine (Prezzo - Costo)</h3>
+<h3 style="color:var(--red)">💸 Margine per Tipologia</h3>
+
 <select id="t5" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
-</div>
-<canvas id="c5"></canvas>
-<div class="small" id="c5Mini"></div>
+
 </div>
 
-<!-- VOLUME -->
+<canvas id="c5"></canvas>
+
+<div class="small" id="c5Mini"></div>
+
+</div>
+
 <div class="card">
+
 <div class="flex">
-<h3>📦 Profitto Medio per Canale</h3>
+<h3 style="color:var(--blue)">📦 Profitto Medio per Canale</h3>
+
 <select id="t6" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
-</div>
-<canvas id="c6"></canvas>
-<div class="small" id="c6Mini"></div>
+
 </div>
 
-<!-- PREMIUM -->
+<canvas id="c6"></canvas>
+
+<div class="small" id="c6Mini"></div>
+
+</div>
 
 <div class="card">
 
-<h3>💎 Impatto Vendite Premium (&gt;1000€)</h3>
+<h3 style="color:var(--gold)">💎 Vendite Premium >1000€</h3>
 
 <div id="premiumImpact"></div>
 
@@ -263,11 +261,9 @@ Volume ≠ Profitto
 
 </div>
 
-<!-- FORECAST -->
-
 <div class="card">
 
-<h3>🔮 Previsioni Automatiche (Trend Futuro)</h3>
+<h3 style="color:var(--violet)">🔮 Previsioni Vendite</h3>
 
 <canvas id="c8"></canvas>
 
@@ -275,11 +271,9 @@ Volume ≠ Profitto
 
 </div>
 
-<!-- AI -->
-
 <div class="card">
 
-<h3>🤖 Consulente AI</h3>
+<h3>🤖 AI Advisor</h3>
 
 <div id="ai"></div>
 
@@ -288,6 +282,19 @@ Volume ≠ Profitto
 </div>
 
 <script>
+
+/* ================= COLOR PALETTE ================= */
+
+const COLORS=[
+ "#4f9cff",
+ "#3ad29f",
+ "#ff6b6b",
+ "#9b7bff",
+ "#ffd966",
+ "#ff9f43",
+ "#00d2d3",
+ "#ee5253"
+];
 
 /* ================= DATA ================= */
 
@@ -299,7 +306,7 @@ let charts={};
 function loadFile(){
 
  let f=file.files[0];
- if(!f) return alert("Carica file");
+ if(!f)return;
 
  let ext=f.name.split(".").pop().toLowerCase();
 
@@ -360,21 +367,7 @@ function num(v){
  .replace(/\s/g,""))||0;
 }
 
-/* ================= GROUP ================= */
-
-function group(arr,k,v){
-
- let o={};
-
- arr.forEach(x=>{
-  if(!x[k])return;
-  o[x[k]]=(o[x[k]]||0)+x[v];
- });
-
- return o;
-}
-
-/* ================= MINI ================= */
+/* ================= MINI DASH ================= */
 
 function miniStats(obj){
 
@@ -392,9 +385,7 @@ function miniStats(obj){
   if(x<min){min=x;minK=k[i]}
  });
 
- return{
-  max,maxK,min,minK,avg:sum/v.length
- };
+ return{max,maxK,min,minK,avg:sum/v.length};
 }
 
 function renderMini(id,obj){
@@ -409,6 +400,20 @@ function renderMini(id,obj){
  📊 Media: ${s.avg.toFixed(0)}
 
  `;
+}
+
+/* ================= GROUP ================= */
+
+function group(arr,k,v){
+
+ let o={};
+
+ arr.forEach(x=>{
+  if(!x[k])return;
+  o[x[k]]=(o[x[k]]||0)+x[v];
+ });
+
+ return o;
 }
 
 /* ================= RENDER ================= */
@@ -449,31 +454,6 @@ function renderKPI(){
  `;
 }
 
-/* ================= CHARTS ================= */
-
-function drawCharts(){
-
- let o1=group(filtered,"canale","prezzo");
- draw("c1","Ricavi",o1,t1.value); renderMini("c1",o1);
-
- let o2=group(filtered,"epoca","profitto");
- draw("c2","Profitto",o2,t2.value); renderMini("c2",o2);
-
- let o3=roiBy("epoca");
- draw("c3","ROI",o3,t3.value); renderMini("c3",o3);
-
- let o4=roiBy("tipo");
- draw("c4","ROI",o4,t4.value); renderMini("c4",o4);
-
- let o5=marginByType();
- draw("c5","Margine",o5,t5.value); renderMini("c5",o5);
-
- let o6=volumeProfit();
- draw("c6","Profitto Medio",o6,t6.value); renderMini("c6",o6);
-
- drawPremiumChart();
-}
-
 /* ================= DRAW ================= */
 
 function draw(id,label,obj,type){
@@ -481,29 +461,35 @@ function draw(id,label,obj,type){
  if(charts[id])charts[id].destroy();
 
  charts[id]=new Chart(document.getElementById(id),{
+
   type,
+
   data:{
    labels:Object.keys(obj),
+
    datasets:[{
     label,
     data:Object.values(obj),
-    backgroundColor:"#d4af37",
-    borderColor:"#ffcc33",
-    borderWidth:2,
-    tension:.3,
-    fill:false
+
+    backgroundColor:Object.keys(obj).map((_,i)=>COLORS[i%COLORS.length]),
+    borderColor:"#fff",
+    borderWidth:1,
+    tension:.35
    }]
   },
+
   options:{
    responsive:true,
    plugins:{
-    legend:{labels:{color:"#eee"}}
+    legend:{labels:{color:"#eee"}},
+    tooltip:{enabled:true}
    },
    scales:{
     x:{ticks:{color:"#aaa"}},
     y:{ticks:{color:"#aaa"}}
    }
   }
+
  });
 }
 
@@ -586,11 +572,9 @@ function analyzePremium(){
   }
  });
 
- return{
-  total,rev,pc,pr,
+ return{total,rev,pc,pr,
   percC:(pc/total*100)||0,
-  percR:(pr/rev*100)||0
- };
+  percR:(pr/rev*100)||0};
 }
 
 function renderPremium(){
@@ -605,7 +589,7 @@ function renderPremium(){
 
  premiumImpact.innerHTML=`
 
- Vendite totali: <b>${p.total}</b><br>
+ Vendite: <b>${p.total}</b><br>
  Fatturato: <b>${p.rev.toFixed(0)}€</b><br><br>
 
  >1000€: <b>${p.pc}</b> (${p.percC.toFixed(1)}%)<br>
@@ -626,6 +610,7 @@ function drawPremiumChart(){
  };
 
  draw("c7","Premium",o,"doughnut");
+
  renderMini("c7",o);
 }
 
@@ -642,9 +627,7 @@ function renderForecast(){
 
  let trend=(v[v.length-1]-v[0])/v.length;
 
- let future=[];
-
- let last=v[v.length-1];
+ let future=[],last=v[v.length-1];
 
  for(let i=1;i<=6;i++){
   last+=trend;
@@ -655,9 +638,11 @@ function renderForecast(){
 
  let data=[...v,...future];
 
- draw("c8","Forecast",labels.reduce((a,k,i)=>{
-  a[k]=data[i];return a;
- },{}),"line");
+ let obj={};
+
+ labels.forEach((x,i)=>obj[x]=data[i]);
+
+ draw("c8","Forecast",obj,"line");
 
  let txt="";
 
@@ -680,7 +665,7 @@ function renderAI(){
  🏺 Miglior categoria: <b>${bestT}</b><br><br>
 
  💡 Strategia:
- Investi su queste aree per crescere.
+ Concentrati su queste aree.
 
  `;
 }
