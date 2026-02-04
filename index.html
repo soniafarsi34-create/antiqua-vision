@@ -2,54 +2,65 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>AntiquaVision Pro</title>
+<title>AntiquaVision Pro Dashboard</title>
 
+<!-- LIB -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
 
+/* ===== DESIGN ===== */
+
 body{
  margin:0;
- background:#0b0e14;
+ background:linear-gradient(180deg,#07090f,#0b0e14);
  color:#eee;
- font-family:Arial;
+ font-family:"Segoe UI",Arial;
 }
 
 header{
- background:#111;
- padding:15px;
+ background:linear-gradient(90deg,#111,#1a1f2e);
+ padding:18px;
  text-align:center;
  color:gold;
- font-size:24px;
- font-weight:bold;
+ font-size:26px;
+ font-weight:700;
+ letter-spacing:1px;
+ box-shadow:0 3px 10px black;
 }
 
 .lang{
- margin-top:6px;
+ margin-top:8px;
 }
 
 .container{
- max-width:1700px;
+ max-width:1800px;
  margin:auto;
- padding:20px;
+ padding:25px;
 }
 
 .card{
- background:#151922;
- padding:20px;
- border-radius:12px;
- margin-bottom:20px;
+ background:linear-gradient(180deg,#141826,#151922);
+ padding:22px;
+ border-radius:14px;
+ margin-bottom:22px;
+ box-shadow:0 0 15px rgba(0,0,0,.4);
 }
 
 button{
- background:gold;
+ background:linear-gradient(90deg,gold,#ffcc33);
  border:none;
- padding:7px 14px;
- border-radius:6px;
- font-weight:bold;
+ padding:7px 15px;
+ border-radius:8px;
+ font-weight:700;
  cursor:pointer;
+ transition:.2s;
+}
+
+button:hover{
+ transform:scale(1.05);
 }
 
 input,select{
@@ -59,20 +70,22 @@ input,select{
  background:#0b0e14;
  color:white;
  border:1px solid #333;
+ border-radius:6px;
 }
 
 .grid{
  display:grid;
  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
- gap:12px;
+ gap:14px;
 }
 
 .kpi{
  background:#0b0e14;
  border:1px solid #333;
- padding:12px;
- border-radius:8px;
+ padding:14px;
+ border-radius:10px;
  text-align:center;
+ font-size:15px;
 }
 
 .flex{
@@ -83,12 +96,19 @@ input,select{
 
 .small{
  font-size:13px;
- color:#aaa;
+ color:#bbb;
  line-height:1.5;
- margin-top:6px;
+ margin-top:8px;
 }
 
-hr{border:1px solid #222;margin:15px 0}
+canvas{
+ margin-top:10px;
+}
+
+hr{
+ border:1px solid #222;
+ margin:15px 0;
+}
 
 </style>
 </head>
@@ -96,7 +116,7 @@ hr{border:1px solid #222;margin:15px 0}
 <body>
 
 <header>
-AntiquaVision — Business Intelligence Pro
+AntiquaVision — Professional Business Intelligence
 
 <div class="lang">
 <button onclick="setLang('it')">🇮🇹</button>
@@ -131,9 +151,7 @@ AntiquaVision — Business Intelligence Pro
 <div class="grid" id="kpi"></div>
 
 <div class="small">
-
-Ricavi = Incassi • Costi = Spese • Profitto = Guadagno • ROI = Rendimento • Vendite = Numero oggetti
-
+Ricavi = Incassi • Costi = Spese • Profitto = Guadagno • ROI = Rendimento
 </div>
 
 </div>
@@ -142,124 +160,93 @@ Ricavi = Incassi • Costi = Spese • Profitto = Guadagno • ROI = Rendimento 
 
 <div class="card">
 
-<h3>📘 Guida Rapida</h3>
+<h3>📘 Guida Strategica</h3>
 
 <div class="small">
 
-ROI &gt;30% = Ottimo • 15–30% = Medio • &lt;15% = Rischio<br>
-Premium &gt;30% fatturato = Punta su pezzi importanti<br>
-Volume alto ≠ Profitto alto
+ROI &gt;30% = Ottimo investimento<br>
+15–30% = Migliorabile<br>
+&lt;15% = Rischio<br><br>
+
+Premium &gt;30% fatturato = Punta su opere importanti<br>
+Volume ≠ Profitto
 
 </div>
 
 </div>
 
-<!-- CHART 1 -->
+<!-- CHARTS -->
 
+<!-- RICAVI -->
 <div class="card">
-
 <div class="flex">
 <h3>📈 Ricavi per Canale</h3>
-
 <select id="t1" onchange="drawCharts()">
-<option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
+<option>bar</option><option>line</option><option>doughnut</option>
 </select>
 </div>
-
 <canvas id="c1"></canvas>
-
 <div class="small" id="c1Mini"></div>
-
 </div>
 
-<!-- CHART 2 -->
-
+<!-- PROFITTO -->
 <div class="card">
-
 <div class="flex">
 <h3>🏛️ Profitto per Epoca</h3>
-
 <select id="t2" onchange="drawCharts()">
-<option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
+<option>bar</option><option>line</option><option>doughnut</option>
 </select>
 </div>
-
 <canvas id="c2"></canvas>
-
 <div class="small" id="c2Mini"></div>
-
 </div>
 
-<!-- CHART 3 -->
-
+<!-- ROI EPOCA -->
 <div class="card">
-
 <div class="flex">
 <h3>📊 ROI per Epoca</h3>
-
 <select id="t3" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
 </div>
-
 <canvas id="c3"></canvas>
-
 <div class="small" id="c3Mini"></div>
-
 </div>
 
-<!-- CHART 4 -->
-
+<!-- ROI TIPO -->
 <div class="card">
-
 <div class="flex">
 <h3>📊 ROI per Categoria</h3>
-
 <select id="t4" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
 </div>
-
 <canvas id="c4"></canvas>
-
 <div class="small" id="c4Mini"></div>
-
 </div>
 
-<!-- CHART 5 -->
-
+<!-- COSTI -->
 <div class="card">
-
 <div class="flex">
-<h3>💸 Costo vs Prezzo</h3>
-
+<h3>💸 Margine (Prezzo - Costo)</h3>
 <select id="t5" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
 </div>
-
 <canvas id="c5"></canvas>
-
 <div class="small" id="c5Mini"></div>
-
 </div>
 
-<!-- CHART 6 -->
-
+<!-- VOLUME -->
 <div class="card">
-
 <div class="flex">
-<h3>📦 Volume vs Profitto</h3>
-
+<h3>📦 Profitto Medio per Canale</h3>
 <select id="t6" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
 </div>
-
 <canvas id="c6"></canvas>
-
 <div class="small" id="c6Mini"></div>
-
 </div>
 
 <!-- PREMIUM -->
@@ -273,6 +260,18 @@ Volume alto ≠ Profitto alto
 <canvas id="c7"></canvas>
 
 <div class="small" id="c7Mini"></div>
+
+</div>
+
+<!-- FORECAST -->
+
+<div class="card">
+
+<h3>🔮 Previsioni Automatiche (Trend Futuro)</h3>
+
+<canvas id="c8"></canvas>
+
+<div class="small" id="forecastText"></div>
 
 </div>
 
@@ -335,6 +334,7 @@ function prepare(rows){
   tipo:r["TIPOLOGIA"]||"",
   paese:r["Nazionalita acquirente"]||"",
   canale:r["luogo di vendita"]||"",
+  mese:r["MeseNorm"]||"",
 
   prezzo:num(r["prezzo di vendita"]),
   costo:num(r["acquisto"]),
@@ -344,7 +344,7 @@ function prepare(rows){
 
  filtered=[...all];
 
- res.innerHTML="✔️ "+all.length+" record";
+ res.innerHTML="✔️ "+all.length+" record caricati";
 
  render();
 }
@@ -374,29 +374,26 @@ function group(arr,k,v){
  return o;
 }
 
-/* ================= MINI DASH ================= */
+/* ================= MINI ================= */
 
 function miniStats(obj){
 
- let vals=Object.values(obj);
- let keys=Object.keys(obj);
+ let k=Object.keys(obj);
+ let v=Object.values(obj);
 
- if(!vals.length) return null;
+ if(!v.length) return null;
 
  let max=-1e9,min=1e9,sum=0;
  let maxK="",minK="";
 
- vals.forEach((v,i)=>{
-
-  sum+=v;
-
-  if(v>max){max=v;maxK=keys[i];}
-  if(v<min){min=v;minK=keys[i];}
-
+ v.forEach((x,i)=>{
+  sum+=x;
+  if(x>max){max=x;maxK=k[i]}
+  if(x<min){min=x;minK=k[i]}
  });
 
  return{
-  max,maxK,min,minK,avg:sum/vals.length
+  max,maxK,min,minK,avg:sum/v.length
  };
 }
 
@@ -405,14 +402,11 @@ function renderMini(id,obj){
  let s=miniStats(obj);
  if(!s)return;
 
- let el=document.getElementById(id+"Mini");
- if(!el)return;
+ document.getElementById(id+"Mini").innerHTML=`
 
- el.innerHTML=`
-
- ⭐ Migliore: <b>${s.maxK}</b> (${s.max.toFixed(0)})<br>
- ⚠️ Peggiore: <b>${s.minK}</b> (${s.min.toFixed(0)})<br>
- 📊 Media: <b>${s.avg.toFixed(0)}</b>
+ ⭐ Migliore: ${s.maxK} (${s.max.toFixed(0)})<br>
+ ⚠️ Peggiore: ${s.minK} (${s.min.toFixed(0)})<br>
+ 📊 Media: ${s.avg.toFixed(0)}
 
  `;
 }
@@ -427,6 +421,7 @@ function render(){
  drawCharts();
  renderAI();
  renderPremium();
+ renderForecast();
 }
 
 /* ================= KPI ================= */
@@ -470,7 +465,7 @@ function drawCharts(){
  let o4=roiBy("tipo");
  draw("c4","ROI",o4,t4.value); renderMini("c4",o4);
 
- let o5=costVsPrice();
+ let o5=marginByType();
  draw("c5","Margine",o5,t5.value); renderMini("c5",o5);
 
  let o6=volumeProfit();
@@ -492,8 +487,22 @@ function draw(id,label,obj,type){
    datasets:[{
     label,
     data:Object.values(obj),
-    backgroundColor:"gold"
+    backgroundColor:"#d4af37",
+    borderColor:"#ffcc33",
+    borderWidth:2,
+    tension:.3,
+    fill:false
    }]
+  },
+  options:{
+   responsive:true,
+   plugins:{
+    legend:{labels:{color:"#eee"}}
+   },
+   scales:{
+    x:{ticks:{color:"#aaa"}},
+    y:{ticks:{color:"#aaa"}}
+   }
   }
  });
 }
@@ -502,28 +511,28 @@ function draw(id,label,obj,type){
 
 function roiBy(key){
 
- let map={};
+ let m={};
 
  filtered.forEach(x=>{
 
   if(!x[key])return;
 
-  if(!map[x[key]])map[x[key]]={p:0,c:0};
+  if(!m[x[key]])m[x[key]]={p:0,c:0};
 
-  map[x[key]].p+=x.profitto;
-  map[x[key]].c+=x.costo;
+  m[x[key]].p+=x.profitto;
+  m[x[key]].c+=x.costo;
  });
 
  let r={};
 
- for(let k in map){
-  r[k]=(map[k].p/map[k].c*100)||0;
+ for(let k in m){
+  r[k]=(m[k].p/m[k].c*100)||0;
  }
 
  return r;
 }
 
-function costVsPrice(){
+function marginByType(){
 
  let r={};
 
@@ -531,19 +540,10 @@ function costVsPrice(){
 
   let k=x.tipo||"Altro";
 
-  if(!r[k])r[k]={c:0,p:0};
-
-  r[k].c+=x.costo;
-  r[k].p+=x.prezzo;
+  r[k]=(r[k]||0)+(x.prezzo-x.costo);
  });
 
- let o={};
-
- for(let k in r){
-  o[k]=r[k].p-r[k].c;
- }
-
- return o;
+ return r;
 }
 
 function volumeProfit(){
@@ -554,16 +554,16 @@ function volumeProfit(){
 
   let k=x.canale||"Altro";
 
-  if(!r[k])r[k]={v:0,p:0};
+  if(!r[k])r[k]={p:0,c:0};
 
-  r[k].v++;
   r[k].p+=x.profitto;
+  r[k].c++;
  });
 
  let o={};
 
  for(let k in r){
-  o[k]=r[k].p/r[k].v;
+  o[k]=r[k].p/r[k].c;
  }
 
  return o;
@@ -573,23 +573,23 @@ function volumeProfit(){
 
 function analyzePremium(){
 
- let totalRev=0,total=filtered.length;
- let pCount=0,pRev=0;
+ let total=filtered.length,rev=0;
+ let pc=0,pr=0;
 
  filtered.forEach(x=>{
 
-  totalRev+=x.prezzo;
+  rev+=x.prezzo;
 
   if(x.prezzo>=1000){
-   pCount++;
-   pRev+=x.prezzo;
+   pc++;
+   pr+=x.prezzo;
   }
  });
 
- return {
-  total,totalRev,pCount,pRev,
-  percCount:(pCount/total*100)||0,
-  percRev:(pRev/totalRev*100)||0
+ return{
+  total,rev,pc,pr,
+  percC:(pc/total*100)||0,
+  percR:(pr/rev*100)||0
  };
 }
 
@@ -597,21 +597,21 @@ function renderPremium(){
 
  let p=analyzePremium();
 
- let strategy="";
+ let s="";
 
- if(p.percRev>40)strategy="🔥 Premium dominante";
- else if(p.percRev>25)strategy="✅ Premium importante";
- else strategy="⚠️ Meglio fascia media";
+ if(p.percR>40)s="🔥 Premium dominante";
+ else if(p.percR>25)s="✅ Premium strategico";
+ else s="⚠️ Focus fascia media";
 
  premiumImpact.innerHTML=`
 
- 📦 Vendite totali: <b>${p.total}</b><br>
- 💰 Fatturato: <b>${p.totalRev.toFixed(0)}€</b><br><br>
+ Vendite totali: <b>${p.total}</b><br>
+ Fatturato: <b>${p.rev.toFixed(0)}€</b><br><br>
 
- 💎 >1000€: <b>${p.pCount}</b> (${p.percCount.toFixed(1)}%)<br>
- 💎 Incasso: <b>${p.pRev.toFixed(0)}€</b> (${p.percRev.toFixed(1)}%)<br><br>
+ >1000€: <b>${p.pc}</b> (${p.percC.toFixed(1)}%)<br>
+ Incasso: <b>${p.pr.toFixed(0)}€</b> (${p.percR.toFixed(1)}%)<br><br>
 
- 📌 Strategia: <b>${strategy}</b>
+ Strategia: <b>${s}</b>
 
  `;
 }
@@ -621,28 +621,66 @@ function drawPremiumChart(){
  let p=analyzePremium();
 
  let o={
-  "Premium >1000€":p.pRev,
-  "Altri":p.totalRev-p.pRev
+  "Premium >1000€":p.pr,
+  "Altri":p.rev-p.pr
  };
 
- draw("c7","Premium Revenue",o,"pie");
-
+ draw("c7","Premium",o,"doughnut");
  renderMini("c7",o);
+}
+
+/* ================= FORECAST ================= */
+
+function renderForecast(){
+
+ let byMonth=group(filtered,"mese","prezzo");
+
+ let m=Object.keys(byMonth).sort();
+ let v=m.map(x=>byMonth[x]);
+
+ if(v.length<2) return;
+
+ let trend=(v[v.length-1]-v[0])/v.length;
+
+ let future=[];
+
+ let last=v[v.length-1];
+
+ for(let i=1;i<=6;i++){
+  last+=trend;
+  future.push(last);
+ }
+
+ let labels=[...m,"+1","+2","+3","+4","+5","+6"];
+
+ let data=[...v,...future];
+
+ draw("c8","Forecast",labels.reduce((a,k,i)=>{
+  a[k]=data[i];return a;
+ },{}),"line");
+
+ let txt="";
+
+ if(trend>0)txt="📈 Crescita prevista";
+ else txt="📉 Possibile rallentamento";
+
+ forecastText.innerHTML=txt;
 }
 
 /* ================= AI ================= */
 
 function renderAI(){
 
- let bestROI=max(roiBy("epoca"));
- let bestCat=max(roiBy("tipo"));
+ let bestE=max(roiBy("epoca"));
+ let bestT=max(roiBy("tipo"));
 
  ai.innerHTML=`
 
- 💎 ROI Top: <b>${bestROI}</b><br>
- 🏺 Categoria Top: <b>${bestCat}</b><br>
+ 🏛️ Miglior epoca: <b>${bestE}</b><br>
+ 🏺 Miglior categoria: <b>${bestT}</b><br><br>
 
- 💡 Concentrati su questi settori.
+ 💡 Strategia:
+ Investi su queste aree per crescere.
 
  `;
 }
