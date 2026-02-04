@@ -2,9 +2,8 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>AntiquaVision All In One</title>
+<title>Antiqua Vision Pro</title>
 
-<!-- LIB -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
@@ -27,12 +26,8 @@ header{
  font-weight:bold;
 }
 
-.lang{
- margin-top:5px;
-}
-
 .container{
- max-width:1800px;
+ max-width:1600px;
  margin:auto;
  padding:20px;
 }
@@ -47,7 +42,7 @@ header{
 button{
  background:gold;
  border:none;
- padding:6px 12px;
+ padding:7px 14px;
  border-radius:6px;
  font-weight:bold;
  cursor:pointer;
@@ -55,16 +50,14 @@ button{
 
 input,select{
  width:100%;
- padding:6px;
+ padding:7px;
  margin:4px 0;
  background:#0b0e14;
  color:white;
  border:1px solid #333;
 }
 
-select.inline{
- width:auto;
-}
+.inline{width:auto}
 
 .grid{
  display:grid;
@@ -88,17 +81,15 @@ select.inline{
 
 .small{font-size:12px;color:#aaa}
 
+hr{border:1px solid #222;margin:15px 0}
+
 </style>
 </head>
 
 <body>
 
 <header>
-AntiquaVision — Business Intelligence
-<div class="lang">
-<button onclick="setLang('it')">🇮🇹 IT</button>
-<button onclick="setLang('en')">🇬🇧 EN</button>
-</div>
+Antiqua Vision — Business Intelligence Pro
 </header>
 
 <div class="container">
@@ -107,34 +98,13 @@ AntiquaVision — Business Intelligence
 
 <div class="card">
 
-<h3>📂 Import Dati</h3>
+<h3>📂 Importa File Excel / CSV</h3>
 
-<b>Interni</b>
-<input type="file" id="fileInternal">
-<button onclick="loadInternal()">Importa</button>
+<input type="file" id="file">
 
-<br><br>
-
-<b>Shop</b>
-<input type="file" id="fileShop">
-<button onclick="loadShop()">Importa</button>
+<button onclick="loadFile()">Analizza</button>
 
 <div id="res"></div>
-
-</div>
-
-<!-- FILTRI -->
-
-<div class="card">
-
-<h3>🎯 Filtri</h3>
-
-<select id="fChannel" class="inline" onchange="applyFilters()"></select>
-<select id="fEra" class="inline" onchange="applyFilters()"></select>
-<select id="fCountry" class="inline" onchange="applyFilters()"></select>
-<select id="fType" class="inline" onchange="applyFilters()"></select>
-
-<button onclick="resetFilters()">Reset</button>
 
 </div>
 
@@ -148,56 +118,58 @@ AntiquaVision — Business Intelligence
 
 </div>
 
-<!-- CHARTS -->
+<!-- GRAFICI -->
 
 <div class="card">
-<div class="flex">
 <h3>📈 Ricavi per Canale</h3>
 <select id="t1" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
 </select>
-</div>
 <canvas id="c1"></canvas>
 </div>
 
 <div class="card">
-<div class="flex">
-<h3>💰 Profitto per Epoca</h3>
+<h3>🏛️ Profitto per Epoca</h3>
 <select id="t2" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
 </select>
-</div>
 <canvas id="c2"></canvas>
 </div>
 
 <div class="card">
-<div class="flex">
 <h3>🌍 Vendite per Paese</h3>
 <select id="t3" onchange="drawCharts()">
 <option>bar</option><option>pie</option><option>doughnut</option>
 </select>
-</div>
 <canvas id="c3"></canvas>
 </div>
 
 <div class="card">
-<div class="flex">
 <h3>🏺 Tipologie</h3>
 <select id="t4" onchange="drawCharts()">
 <option>bar</option><option>pie</option><option>doughnut</option>
 </select>
-</div>
 <canvas id="c4"></canvas>
 </div>
 
 <div class="card">
-<div class="flex">
 <h3>💎 Prezzo Medio Epoca × Canale</h3>
 <select id="t5" onchange="drawCharts()">
-<option>bar</option><option>line</option><option>pie</option>
+<option>bar</option><option>line</option>
 </select>
-</div>
 <canvas id="c5"></canvas>
+</div>
+
+<!-- STRATEGIA PREZZI -->
+
+<div class="card">
+
+<h3>💰 Strategia Fasce di Prezzo</h3>
+
+<div id="priceAI"></div>
+
+<canvas id="c6"></canvas>
+
 </div>
 
 <!-- AI -->
@@ -205,18 +177,19 @@ AntiquaVision — Business Intelligence
 <div class="card">
 
 <h3>🤖 Consulente AI</h3>
+
 <div id="ai"></div>
 
 </div>
 
-<!-- Q&A -->
+<!-- DOMANDE -->
 
 <div class="card">
 
 <h3>💬 Domande Business</h3>
 
 <div class="small">
-Esempi: paese profitto, cosa comprano americani, miglior canale, epoca migliore
+Esempi: paese profitto, fascia migliore, epoca premium, dove investire
 </div>
 
 <input id="question">
@@ -233,169 +206,82 @@ Esempi: paese profitto, cosa comprano americani, miglior canale, epoca migliore
 
 <script>
 
-/* ================= DATA ================= */
+/* DATA */
 
-let internal=[],shop=[],all=[],filtered=[];
+let all=[],filtered=[];
 let charts={};
-let lang="it";
 
-/* ================= LANG ================= */
+/* LOAD */
 
-const TXT={
- it:{growth:"Crescita",decline:"Calo",stable:"Stabile"},
- en:{growth:"Growth",decline:"Decline",stable:"Stable"}
-};
+function loadFile(){
 
-function setLang(l){lang=l;render();}
+ let f=file.files[0];
 
-/* ================= UTILS ================= */
+ if(!f) return alert("Carica un file");
 
-function num(v){
- return Number(String(v||"")
- .replace("€","").replace("%","")
- .replace(",",".").replace(/\s/g,""))||0;
-}
+ let ext=f.name.split(".").pop().toLowerCase();
 
-/* ================= FILE ================= */
-
-function readFile(file,cb){
-
- let e=file.name.split(".").pop().toLowerCase();
-
- if(e==="xlsx"){
+ if(ext==="xlsx"){
 
   let r=new FileReader();
 
-  r.onload=a=>{
-   let wb=XLSX.read(new Uint8Array(a.target.result),{type:"array"});
-   cb(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
+  r.onload=e=>{
+
+   let wb=XLSX.read(new Uint8Array(e.target.result),{type:"array"});
+   let json=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+
+   prepare(json);
   };
 
-  r.readAsArrayBuffer(file);
+  r.readAsArrayBuffer(f);
 
  }else{
 
-  Papa.parse(file,{
+  Papa.parse(f,{
    header:true,
    skipEmptyLines:true,
-   complete:r=>cb(r.data)
+   complete:r=>prepare(r.data)
   });
  }
 }
 
-/* ================= LOAD ================= */
+/* PREPARE */
 
-function loadInternal(){
+function prepare(rows){
 
- let f=fileInternal.files[0];
- if(!f) return;
+ all=rows.map(r=>({
 
- readFile(f,d=>{
+  nome:r["Merce venduta"]||"",
+  tipo:r["TIPOLOGIA"]||"",
+  epoca:r["epoca"]||"",
+  paese:r["Nazionalita acquirente"]||"",
+  canale:r["luogo di vendita"]||"",
 
-  internal=d.map(r=>({
+  prezzo:num(r["prezzo di vendita"]),
+  costo:num(r["acquisto"]),
+  profitto:num(r["profitto"])
 
-   nome:r["Merce venduta"]||"",
-   tipo:r["TIPOLOGIA"]||"",
-   epoca:r["epoca"]||"",
-   paese:r["Nazionalita acquirente"]||"",
-   sito:r["luogo di vendita"]||"Offline",
-   mese:r["MeseNorm"]||"",
+ }));
 
-   prezzo:num(r["prezzo di vendita"]),
-   costo:num(r["acquisto"]),
-   profitto:num(r["profitto"]),
-   margine:num(r["margine %"])
-
-  }));
-
-  update();
- });
-}
-
-function loadShop(){
-
- let f=fileShop.files[0];
- if(!f) return;
-
- readFile(f,d=>{
-
-  shop=d.map(r=>({
-
-   nome:r["Product name"]||"",
-   sito:"Online",
-
-   prezzo:num(r["Total"]||0),
-   costo:0,
-   profitto:num(r["Total"]||0)*0.4,
-   margine:40
-
-  }));
-
-  update();
- });
-}
-
-/* ================= UPDATE ================= */
-
-function update(){
-
- all=[...internal,...shop];
  filtered=[...all];
 
  res.innerHTML="✔️ Record: "+all.length;
 
- buildFilters();
  render();
 }
 
-/* ================= FILTERS ================= */
+/* NUM */
 
-function buildFilters(){
+function num(v){
 
- fill(fChannel,"sito","Tutti Canali");
- fill(fEra,"epoca","Tutte Epoche");
- fill(fCountry,"paese","Tutti Paesi");
- fill(fType,"tipo","Tutte Tipologie");
+ return Number(String(v||"")
+ .replace("€","")
+ .replace("%","")
+ .replace(",",".")
+ .replace(/\s/g,""))||0;
 }
 
-function fill(el,key,label){
-
- let s=new Set();
-
- internal.forEach(x=>x[key]&&s.add(x[key]));
-
- el.innerHTML=`<option value="">${label}</option>`;
-
- s.forEach(v=>el.innerHTML+=`<option>${v}</option>`);
-}
-
-function applyFilters(){
-
- filtered=all.filter(x=>
-
- (!fChannel.value||x.sito===fChannel.value)&&
- (!fEra.value||x.epoca===fEra.value)&&
- (!fCountry.value||x.paese===fCountry.value)&&
- (!fType.value||x.tipo===fType.value)
-
- );
-
- render();
-}
-
-function resetFilters(){
-
- fChannel.value="";
- fEra.value="";
- fCountry.value="";
- fType.value="";
-
- filtered=[...all];
-
- render();
-}
-
-/* ================= GROUP ================= */
+/* GROUP */
 
 function group(arr,k,v){
 
@@ -403,32 +289,13 @@ function group(arr,k,v){
 
  arr.forEach(x=>{
   if(!x[k])return;
-  o[x[k]]=(o[x[k]]||0)+(v?x[v]:1);
+  o[x[k]]=(o[x[k]]||0)+x[v];
  });
 
  return o;
 }
 
-/* ================= DRAW ================= */
-
-function draw(id,label,obj,type){
-
- if(charts[id])charts[id].destroy();
-
- charts[id]=new Chart(document.getElementById(id),{
-  type,
-  data:{
-   labels:Object.keys(obj),
-   datasets:[{
-    label,
-    data:Object.values(obj),
-    backgroundColor:"gold"
-   }]
-  }
- });
-}
-
-/* ================= RENDER ================= */
+/* RENDER */
 
 function render(){
 
@@ -437,10 +304,10 @@ function render(){
  renderKPI();
  drawCharts();
  renderAI();
- renderEnterprise();
+ renderPriceStrategy();
 }
 
-/* ================= KPI ================= */
+/* KPI */
 
 function renderKPI(){
 
@@ -465,17 +332,37 @@ function renderKPI(){
  `;
 }
 
-/* ================= CHARTS ================= */
+/* CHARTS */
 
 function drawCharts(){
 
- draw("c1","Ricavi",group(filtered,"sito","prezzo"),t1.value);
+ draw("c1","Ricavi",group(filtered,"canale","prezzo"),t1.value);
  draw("c2","Profitto",group(filtered,"epoca","profitto"),t2.value);
  draw("c3","Paesi",group(filtered,"paese","prezzo"),t3.value);
  draw("c4","Tipologie",group(filtered,"tipo","profitto"),t4.value);
 
  drawAvg();
+ drawPriceBands();
 }
+
+function draw(id,label,obj,type){
+
+ if(charts[id]) charts[id].destroy();
+
+ charts[id]=new Chart(document.getElementById(id),{
+  type,
+  data:{
+   labels:Object.keys(obj),
+   datasets:[{
+    label,
+    data:Object.values(obj),
+    backgroundColor:"gold"
+   }]
+  }
+ });
+}
+
+/* AVG */
 
 function drawAvg(){
 
@@ -483,9 +370,9 @@ function drawAvg(){
 
  filtered.forEach(x=>{
 
-  if(!x.epoca||!x.sito)return;
+  if(!x.epoca||!x.canale)return;
 
-  let k=x.sito+" / "+x.epoca;
+  let k=x.canale+" / "+x.epoca;
 
   if(!m[k])m[k]={t:0,c:0};
 
@@ -500,96 +387,117 @@ function drawAvg(){
  draw("c5","Prezzo Medio",r,t5.value);
 }
 
-/* ================= AI ================= */
+/* FASCE PREZZO */
+
+function drawPriceBands(){
+
+ let bands={
+  "0-200":0,
+  "200-500":0,
+  "500-1000":0,
+  "1000+":0
+ };
+
+ filtered.forEach(x=>{
+
+  let p=x.prezzo;
+
+  if(p<=200)bands["0-200"]++;
+  else if(p<=500)bands["200-500"]++;
+  else if(p<=1000)bands["500-1000"]++;
+  else bands["1000+"]++;
+ });
+
+ draw("c6","Fasce Prezzo",bands,"bar");
+}
+
+/* AI */
 
 function renderAI(){
 
- let bestC=max(group(filtered,"sito","profitto"));
+ let bestC=max(group(filtered,"canale","profitto"));
  let bestE=max(group(filtered,"epoca","profitto"));
  let bestT=max(group(filtered,"tipo","profitto"));
 
  ai.innerHTML=`
 
  ✅ Miglior canale: <b>${bestC}</b><br>
- 🏛️ Miglior epoca: <b>${bestE}</b><br>
- 🏺 Miglior tipologia: <b>${bestT}</b><br>
+ 🏛️ Epoca migliore: <b>${bestE}</b><br>
+ 🏺 Tipologia top: <b>${bestT}</b><br>
 
  `;
 }
 
-/* ================= ENTERPRISE ================= */
+/* STRATEGIA PREZZI */
 
-function renderEnterprise(){
+function renderPriceStrategy(){
 
- let loss=filtered.filter(x=>x.profitto<0).length;
- let trend=forecast();
- let budget=Math.round(totalProfit()*0.4);
- let risk=riskIndex();
+ let premium=filtered.filter(x=>x.prezzo>=1000);
 
- ai.innerHTML+=`
+ let ep={};
+ let tp={};
+
+ premium.forEach(x=>{
+
+  ep[x.epoca]=(ep[x.epoca]||0)+1;
+  tp[x.tipo]=(tp[x.tipo]||0)+1;
+
+ });
+
+ let bestEra=max(ep);
+ let bestType=max(tp);
+
+ priceAI.innerHTML=`
+
+ 📌 Vendite sopra 1000€: <b>${premium.length}</b><br><br>
+
+ 🏛️ Epoca premium ricorrente: <b>${bestEra}</b><br>
+ 🏺 Categoria premium: <b>${bestType}</b><br>
 
  <hr>
 
- ❌ Perdite: ${loss}<br>
- 📈 Trend: ${trend}<br>
- 💸 Budget: ${budget}€<br>
- 🚨 Rischio: ${risk}<br>
+ 💡 Strategia:
+
+ <br>• Le fasce sopra 1000€ funzionano soprattutto in: <b>${bestEra}</b>
+ <br>• Le categorie più stabili: <b>${bestType}</b>
+ <br>• Conviene mantenere mix tra medio e premium
 
  `;
 }
 
-function forecast(){
-
- let m=Object.values(group(filtered,"mese","prezzo"));
-
- if(m.length<2)return TXT[lang].stable;
-
- return m[m.length-1]>m[0]?TXT[lang].growth:TXT[lang].decline;
-}
-
-function totalProfit(){
-
- let p=0;
- filtered.forEach(x=>p+=x.profitto);
- return p;
-}
-
-function riskIndex(){
-
- let l=filtered.filter(x=>x.profitto<0).length;
-
- let r=l/filtered.length;
-
- if(r<0.1)return"Basso";
- if(r<0.25)return"Medio";
-
- return"Alto";
-}
-
-/* ================= Q&A ================= */
+/* Q&A */
 
 function ask(){
 
  let q=question.value.toLowerCase();
  let r="Nessun dato.";
 
- if(q.includes("usa"))r="🇺🇸 "+max(group(filtered,"tipo","prezzo"));
- if(q.includes("paese")&&q.includes("profit"))r="🌍 "+max(group(filtered,"paese","profitto"));
- if(q.includes("perdo"))r="⚠️ "+min(group(filtered,"sito","profitto"));
- if(q.includes("canale"))r="🏆 "+max(group(filtered,"sito","profitto"));
- if(q.includes("epoca"))r="🏛️ "+max(group(filtered,"epoca","profitto"));
+ if(q.includes("fascia"))
+  r="💰 Migliore: "+max(group(filtered,"epoca","prezzo"));
+
+ if(q.includes("premium"))
+  r="💎 "+max(group(filtered.filter(x=>x.prezzo>1000),"epoca","prezzo"));
+
+ if(q.includes("epoca"))
+  r="🏛️ "+max(group(filtered,"epoca","profitto"));
+
+ if(q.includes("canale"))
+  r="🏆 "+max(group(filtered,"canale","profitto"));
+
+ if(q.includes("paese"))
+  r="🌍 "+max(group(filtered,"paese","profitto"));
 
  answer.innerHTML=r;
 }
 
-/* ================= EXPORT ================= */
+/* EXPORT */
 
 function exportCSV(){
 
  let csv="Nome,Prezzo,Profitto,Canale,Paese\n";
 
  filtered.forEach(x=>{
-  csv+=`${x.nome},${x.prezzo},${x.profitto},${x.sito},${x.paese}\n`;
+  csv+=`${x.nome},${x.prezzo},${x.profitto},${x.canale},${x.paese}\n`;
  });
 
  let b=new Blob([csv]);
@@ -602,28 +510,17 @@ function exportCSV(){
  a.click();
 }
 
-/* ================= MIN MAX ================= */
+/* MAX */
 
 function max(o){
 
- let m=-1e9,k="";
+ let m=-1e9,k="N/D";
 
  for(let x in o){
   if(o[x]>m){m=o[x];k=x;}
  }
 
- return k||"N/D";
-}
-
-function min(o){
-
- let m=1e9,k="";
-
- for(let x in o){
-  if(o[x]<m){m=o[x];k=x;}
- }
-
- return k||"N/D";
+ return k;
 }
 
 </script>
