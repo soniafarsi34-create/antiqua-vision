@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Antiqua Vision Pro</title>
+<title>AntiquaVision International</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -26,8 +26,12 @@ header{
  font-weight:bold;
 }
 
+.lang{
+ margin-top:8px;
+}
+
 .container{
- max-width:1600px;
+ max-width:1700px;
  margin:auto;
  padding:20px;
 }
@@ -81,15 +85,20 @@ input,select{
 
 .small{font-size:12px;color:#aaa}
 
-hr{border:1px solid #222;margin:15px 0}
-
 </style>
 </head>
 
 <body>
 
 <header>
-Antiqua Vision — Business Intelligence Pro
+<span data-t="title">AntiquaVision — Investment Dashboard</span>
+
+<div class="lang">
+<button onclick="setLang('it')">🇮🇹</button>
+<button onclick="setLang('en')">🇬🇧</button>
+<button onclick="setLang('de')">🇩🇪</button>
+<button onclick="setLang('fr')">🇫🇷</button>
+</div>
 </header>
 
 <div class="container">
@@ -98,11 +107,11 @@ Antiqua Vision — Business Intelligence Pro
 
 <div class="card">
 
-<h3>📂 Importa File Excel / CSV</h3>
+<h3 data-t="import">📂 Import File</h3>
 
 <input type="file" id="file">
 
-<button onclick="loadFile()">Analizza</button>
+<button onclick="loadFile()" data-t="analyze">Analyze</button>
 
 <div id="res"></div>
 
@@ -112,112 +121,189 @@ Antiqua Vision — Business Intelligence Pro
 
 <div class="card">
 
-<h3>📊 Dashboard</h3>
+<h3 data-t="dashboard">📊 Dashboard</h3>
 
 <div class="grid" id="kpi"></div>
 
 </div>
 
-<!-- GRAFICI -->
+<!-- CHARTS -->
 
 <div class="card">
-<h3>📈 Ricavi per Canale</h3>
+<div class="flex">
+<h3 data-t="revChannel">📈 Revenue by Channel</h3>
 <select id="t1" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
 </select>
+</div>
 <canvas id="c1"></canvas>
 </div>
 
 <div class="card">
-<h3>🏛️ Profitto per Epoca</h3>
+<div class="flex">
+<h3 data-t="profitEra">🏛️ Profit by Era</h3>
 <select id="t2" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
 </select>
+</div>
 <canvas id="c2"></canvas>
 </div>
 
 <div class="card">
-<h3>🌍 Vendite per Paese</h3>
+<div class="flex">
+<h3 data-t="roiEra">📊 ROI by Era</h3>
 <select id="t3" onchange="drawCharts()">
-<option>bar</option><option>pie</option><option>doughnut</option>
+<option>bar</option><option>line</option>
 </select>
+</div>
 <canvas id="c3"></canvas>
 </div>
 
 <div class="card">
-<h3>🏺 Tipologie</h3>
+<div class="flex">
+<h3 data-t="roiType">📊 ROI by Category</h3>
 <select id="t4" onchange="drawCharts()">
-<option>bar</option><option>pie</option><option>doughnut</option>
+<option>bar</option><option>line</option>
 </select>
+</div>
 <canvas id="c4"></canvas>
 </div>
 
 <div class="card">
-<h3>💎 Prezzo Medio Epoca × Canale</h3>
+<div class="flex">
+<h3 data-t="costPrice">💸 Cost vs Price</h3>
 <select id="t5" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
+</div>
 <canvas id="c5"></canvas>
 </div>
 
-<!-- STRATEGIA PREZZI -->
+<div class="card">
+<div class="flex">
+<h3 data-t="volumeProfit">📦 Volume vs Profit</h3>
+<select id="t6" onchange="drawCharts()">
+<option>bar</option><option>line</option>
+</select>
+</div>
+<canvas id="c6"></canvas>
+</div>
 
 <div class="card">
-
-<h3>💰 Strategia Fasce di Prezzo</h3>
-
-<div id="priceAI"></div>
-
-<canvas id="c6"></canvas>
-
+<div class="flex">
+<h3 data-t="premiumRatio">💎 Premium Sales Ratio</h3>
+<select id="t7" onchange="drawCharts()">
+<option>bar</option><option>pie</option>
+</select>
+</div>
+<canvas id="c7"></canvas>
 </div>
 
 <!-- AI -->
 
 <div class="card">
 
-<h3>🤖 Consulente AI</h3>
+<h3 data-t="ai">🤖 AI Advisor</h3>
 
 <div id="ai"></div>
 
 </div>
 
-<!-- DOMANDE -->
-
-<div class="card">
-
-<h3>💬 Domande Business</h3>
-
-<div class="small">
-Esempi: paese profitto, fascia migliore, epoca premium, dove investire
-</div>
-
-<input id="question">
-
-<button onclick="ask()">Chiedi</button>
-
-<div id="answer" style="color:gold;margin-top:8px"></div>
-
-</div>
-
-<button onclick="exportCSV()">📤 Export Report</button>
-
 </div>
 
 <script>
 
-/* DATA */
+/* ================= LANG ================= */
+
+let lang="it";
+
+const TXT={
+
+ it:{
+  title:"AntiquaVision — Dashboard Investimenti",
+  import:"📂 Importa File",
+  analyze:"Analizza",
+  dashboard:"📊 Dashboard",
+  revChannel:"Ricavi per Canale",
+  profitEra:"Profitto per Epoca",
+  roiEra:"ROI per Epoca",
+  roiType:"ROI per Categoria",
+  costPrice:"Costo vs Prezzo",
+  volumeProfit:"Volume vs Profitto",
+  premiumRatio:"Vendite Premium",
+  ai:"🤖 Consulente AI"
+ },
+
+ en:{
+  title:"AntiquaVision — Investment Dashboard",
+  import:"📂 Import File",
+  analyze:"Analyze",
+  dashboard:"📊 Dashboard",
+  revChannel:"Revenue by Channel",
+  profitEra:"Profit by Era",
+  roiEra:"ROI by Era",
+  roiType:"ROI by Category",
+  costPrice:"Cost vs Price",
+  volumeProfit:"Volume vs Profit",
+  premiumRatio:"Premium Sales",
+  ai:"🤖 AI Advisor"
+ },
+
+ de:{
+  title:"AntiquaVision — Investitionsübersicht",
+  import:"📂 Datei Importieren",
+  analyze:"Analysieren",
+  dashboard:"📊 Übersicht",
+  revChannel:"Umsatz nach Kanal",
+  profitEra:"Gewinn nach Epoche",
+  roiEra:"ROI nach Epoche",
+  roiType:"ROI nach Kategorie",
+  costPrice:"Kosten vs Preis",
+  volumeProfit:"Volumen vs Gewinn",
+  premiumRatio:"Premium Verkäufe",
+  ai:"🤖 KI Berater"
+ },
+
+ fr:{
+  title:"AntiquaVision — Tableau d’Investissement",
+  import:"📂 Importer Fichier",
+  analyze:"Analyser",
+  dashboard:"📊 Tableau",
+  revChannel:"Revenus par Canal",
+  profitEra:"Profit par Époque",
+  roiEra:"ROI par Époque",
+  roiType:"ROI par Catégorie",
+  costPrice:"Coût vs Prix",
+  volumeProfit:"Volume vs Profit",
+  premiumRatio:"Ventes Premium",
+  ai:"🤖 Conseiller IA"
+ }
+
+};
+
+function setLang(l){
+
+ lang=l;
+
+ document.querySelectorAll("[data-t]").forEach(el=>{
+
+  let k=el.getAttribute("data-t");
+
+  if(TXT[l][k]) el.innerText=TXT[l][k];
+ });
+}
+
+/* ================= DATA ================= */
 
 let all=[],filtered=[];
 let charts={};
 
-/* LOAD */
+/* ================= LOAD ================= */
 
 function loadFile(){
 
  let f=file.files[0];
-
- if(!f) return alert("Carica un file");
+ if(!f) return alert("Upload file");
 
  let ext=f.name.split(".").pop().toLowerCase();
 
@@ -226,11 +312,8 @@ function loadFile(){
   let r=new FileReader();
 
   r.onload=e=>{
-
    let wb=XLSX.read(new Uint8Array(e.target.result),{type:"array"});
-   let json=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-
-   prepare(json);
+   prepare(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
   };
 
   r.readAsArrayBuffer(f);
@@ -245,15 +328,14 @@ function loadFile(){
  }
 }
 
-/* PREPARE */
+/* ================= PREPARE ================= */
 
 function prepare(rows){
 
  all=rows.map(r=>({
 
-  nome:r["Merce venduta"]||"",
-  tipo:r["TIPOLOGIA"]||"",
   epoca:r["epoca"]||"",
+  tipo:r["TIPOLOGIA"]||"",
   paese:r["Nazionalita acquirente"]||"",
   canale:r["luogo di vendita"]||"",
 
@@ -265,12 +347,12 @@ function prepare(rows){
 
  filtered=[...all];
 
- res.innerHTML="✔️ Record: "+all.length;
+ res.innerHTML="✔️ "+all.length+" records";
 
  render();
 }
 
-/* NUM */
+/* ================= NUM ================= */
 
 function num(v){
 
@@ -281,7 +363,7 @@ function num(v){
  .replace(/\s/g,""))||0;
 }
 
-/* GROUP */
+/* ================= GROUP ================= */
 
 function group(arr,k,v){
 
@@ -295,59 +377,35 @@ function group(arr,k,v){
  return o;
 }
 
-/* RENDER */
+/* ================= RENDER ================= */
 
 function render(){
 
  if(!filtered.length)return;
 
- renderKPI();
  drawCharts();
  renderAI();
- renderPriceStrategy();
 }
 
-/* KPI */
-
-function renderKPI(){
-
- let r=0,c=0,p=0;
-
- filtered.forEach(x=>{
-  r+=x.prezzo;
-  c+=x.costo;
-  p+=x.profitto;
- });
-
- let roi=(p/c*100)||0;
-
- kpi.innerHTML=`
-
- <div class="kpi"><b>${r.toFixed(0)}€</b><br>Ricavi</div>
- <div class="kpi"><b>${c.toFixed(0)}€</b><br>Costi</div>
- <div class="kpi"><b>${p.toFixed(0)}€</b><br>Profitto</div>
- <div class="kpi"><b>${roi.toFixed(1)}%</b><br>ROI</div>
- <div class="kpi"><b>${filtered.length}</b><br>Vendite</div>
-
- `;
-}
-
-/* CHARTS */
+/* ================= CHARTS ================= */
 
 function drawCharts(){
 
- draw("c1","Ricavi",group(filtered,"canale","prezzo"),t1.value);
- draw("c2","Profitto",group(filtered,"epoca","profitto"),t2.value);
- draw("c3","Paesi",group(filtered,"paese","prezzo"),t3.value);
- draw("c4","Tipologie",group(filtered,"tipo","profitto"),t4.value);
+ draw("c1","Revenue",group(filtered,"canale","prezzo"),t1.value);
+ draw("c2","Profit",group(filtered,"epoca","profitto"),t2.value);
 
- drawAvg();
- drawPriceBands();
+ draw("c3","ROI",roiBy("epoca"),t3.value);
+ draw("c4","ROI",roiBy("tipo"),t4.value);
+
+ draw("c5","Cost vs Price",costVsPrice(),t5.value);
+ draw("c6","Volume vs Profit",volumeProfit(),t6.value);
+
+ draw("c7","Premium",premiumRatio(),t7.value);
 }
 
 function draw(id,label,obj,type){
 
- if(charts[id]) charts[id].destroy();
+ if(charts[id])charts[id].destroy();
 
  charts[id]=new Chart(document.getElementById(id),{
   type,
@@ -362,159 +420,118 @@ function draw(id,label,obj,type){
  });
 }
 
-/* AVG */
+/* ================= ANALYTICS ================= */
 
-function drawAvg(){
+function roiBy(key){
 
- let m={};
+ let map={};
 
  filtered.forEach(x=>{
 
-  if(!x.epoca||!x.canale)return;
+  if(!x[key])return;
 
-  let k=x.canale+" / "+x.epoca;
+  if(!map[x[key]])map[x[key]]={p:0,c:0};
 
-  if(!m[k])m[k]={t:0,c:0};
-
-  m[k].t+=x.prezzo;
-  m[k].c++;
+  map[x[key]].p+=x.profitto;
+  map[x[key]].c+=x.costo;
  });
 
  let r={};
 
- for(let k in m)r[k]=m[k].t/m[k].c;
+ for(let k in map){
+  r[k]=(map[k].p/map[k].c*100)||0;
+ }
 
- draw("c5","Prezzo Medio",r,t5.value);
+ return r;
 }
 
-/* FASCE PREZZO */
+function costVsPrice(){
 
-function drawPriceBands(){
-
- let bands={
-  "0-200":0,
-  "200-500":0,
-  "500-1000":0,
-  "1000+":0
- };
+ let r={};
 
  filtered.forEach(x=>{
 
-  let p=x.prezzo;
+  let k=x.tipo||"Other";
 
-  if(p<=200)bands["0-200"]++;
-  else if(p<=500)bands["200-500"]++;
-  else if(p<=1000)bands["500-1000"]++;
-  else bands["1000+"]++;
+  if(!r[k])r[k]={c:0,p:0};
+
+  r[k].c+=x.costo;
+  r[k].p+=x.prezzo;
  });
 
- draw("c6","Fasce Prezzo",bands,"bar");
+ let o={};
+
+ for(let k in r){
+  o[k]=r[k].p-r[k].c;
+ }
+
+ return o;
 }
 
-/* AI */
+function volumeProfit(){
+
+ let r={};
+
+ filtered.forEach(x=>{
+
+  let k=x.canale||"Other";
+
+  if(!r[k])r[k]={v:0,p:0};
+
+  r[k].v++;
+  r[k].p+=x.profitto;
+ });
+
+ let o={};
+
+ for(let k in r){
+  o[k]=r[k].p/r[k].v;
+ }
+
+ return o;
+}
+
+function premiumRatio(){
+
+ let p=0,n=0;
+
+ filtered.forEach(x=>{
+
+  if(x.prezzo>=1000)p++;
+  n++;
+ });
+
+ return {
+  "Premium >1000€":p,
+  "Other":n-p
+ };
+}
+
+/* ================= AI ================= */
 
 function renderAI(){
 
- let bestC=max(group(filtered,"canale","profitto"));
- let bestE=max(group(filtered,"epoca","profitto"));
- let bestT=max(group(filtered,"tipo","profitto"));
+ let bestROI=max(roiBy("epoca"));
+ let bestCat=max(roiBy("tipo"));
+ let premium=Object.values(premiumRatio())[0];
 
  ai.innerHTML=`
 
- ✅ Miglior canale: <b>${bestC}</b><br>
- 🏛️ Epoca migliore: <b>${bestE}</b><br>
- 🏺 Tipologia top: <b>${bestT}</b><br>
+ 💎 Best ROI Era: <b>${bestROI}</b><br>
+ 🏺 Best Category: <b>${bestCat}</b><br>
+ ⭐ Premium Sales: <b>${premium}</b><br>
+
+ 📌 Strategy:
+ Focus on ${bestROI} and ${bestCat}
 
  `;
 }
 
-/* STRATEGIA PREZZI */
-
-function renderPriceStrategy(){
-
- let premium=filtered.filter(x=>x.prezzo>=1000);
-
- let ep={};
- let tp={};
-
- premium.forEach(x=>{
-
-  ep[x.epoca]=(ep[x.epoca]||0)+1;
-  tp[x.tipo]=(tp[x.tipo]||0)+1;
-
- });
-
- let bestEra=max(ep);
- let bestType=max(tp);
-
- priceAI.innerHTML=`
-
- 📌 Vendite sopra 1000€: <b>${premium.length}</b><br><br>
-
- 🏛️ Epoca premium ricorrente: <b>${bestEra}</b><br>
- 🏺 Categoria premium: <b>${bestType}</b><br>
-
- <hr>
-
- 💡 Strategia:
-
- <br>• Le fasce sopra 1000€ funzionano soprattutto in: <b>${bestEra}</b>
- <br>• Le categorie più stabili: <b>${bestType}</b>
- <br>• Conviene mantenere mix tra medio e premium
-
- `;
-}
-
-/* Q&A */
-
-function ask(){
-
- let q=question.value.toLowerCase();
- let r="Nessun dato.";
-
- if(q.includes("fascia"))
-  r="💰 Migliore: "+max(group(filtered,"epoca","prezzo"));
-
- if(q.includes("premium"))
-  r="💎 "+max(group(filtered.filter(x=>x.prezzo>1000),"epoca","prezzo"));
-
- if(q.includes("epoca"))
-  r="🏛️ "+max(group(filtered,"epoca","profitto"));
-
- if(q.includes("canale"))
-  r="🏆 "+max(group(filtered,"canale","profitto"));
-
- if(q.includes("paese"))
-  r="🌍 "+max(group(filtered,"paese","profitto"));
-
- answer.innerHTML=r;
-}
-
-/* EXPORT */
-
-function exportCSV(){
-
- let csv="Nome,Prezzo,Profitto,Canale,Paese\n";
-
- filtered.forEach(x=>{
-  csv+=`${x.nome},${x.prezzo},${x.profitto},${x.canale},${x.paese}\n`;
- });
-
- let b=new Blob([csv]);
-
- let a=document.createElement("a");
-
- a.href=URL.createObjectURL(b);
- a.download="report_antiquavision.csv";
-
- a.click();
-}
-
-/* MAX */
+/* ================= MAX ================= */
 
 function max(o){
 
- let m=-1e9,k="N/D";
+ let m=-1e9,k="N/A";
 
  for(let x in o){
   if(o[x]>m){m=o[x];k=x;}
