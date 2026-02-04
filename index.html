@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>AntiquaVision Smart Dashboard</title>
+<title>AntiquaVision Pro</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -61,8 +61,6 @@ input,select{
  border:1px solid #333;
 }
 
-.inline{width:auto}
-
 .grid{
  display:grid;
  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -87,6 +85,7 @@ input,select{
  font-size:13px;
  color:#aaa;
  line-height:1.5;
+ margin-top:6px;
 }
 
 hr{border:1px solid #222;margin:15px 0}
@@ -97,7 +96,7 @@ hr{border:1px solid #222;margin:15px 0}
 <body>
 
 <header>
-<span data-t="title">AntiquaVision — Smart Dashboard</span>
+AntiquaVision — Business Intelligence Pro
 
 <div class="lang">
 <button onclick="setLang('it')">🇮🇹</button>
@@ -113,11 +112,11 @@ hr{border:1px solid #222;margin:15px 0}
 
 <div class="card">
 
-<h3 data-t="import">📂 Importa File</h3>
+<h3>📂 Importa File Excel / CSV</h3>
 
 <input type="file" id="file">
 
-<button onclick="loadFile()" data-t="analyze">Analizza</button>
+<button onclick="loadFile()">Analizza</button>
 
 <div id="res"></div>
 
@@ -127,13 +126,13 @@ hr{border:1px solid #222;margin:15px 0}
 
 <div class="card">
 
-<h3 data-t="dashboard">📊 Dashboard</h3>
+<h3>📊 Dashboard Generale</h3>
 
 <div class="grid" id="kpi"></div>
 
-<div class="small" data-t="kpi_help">
+<div class="small">
 
-Ricavi = Incassi totali • Costi = Spese • Profitto = Guadagno • ROI = Rendimento • Vendite = Numero oggetti
+Ricavi = Incassi • Costi = Spese • Profitto = Guadagno • ROI = Rendimento • Vendite = Numero oggetti
 
 </div>
 
@@ -143,95 +142,137 @@ Ricavi = Incassi totali • Costi = Spese • Profitto = Guadagno • ROI = Rend
 
 <div class="card">
 
-<h3>📘 Guida Lettura Dati</h3>
+<h3>📘 Guida Rapida</h3>
 
-<div class="small" data-t="guide">
+<div class="small">
 
-ROI >30% = Ottimo • 15–30% = Medio • <15% = Rischio  
-Premium >30% fatturato = Punta su pezzi importanti  
-Volume alto ≠ Profitto alto  
-
-</div>
+ROI &gt;30% = Ottimo • 15–30% = Medio • &lt;15% = Rischio<br>
+Premium &gt;30% fatturato = Punta su pezzi importanti<br>
+Volume alto ≠ Profitto alto
 
 </div>
 
-<!-- CHARTS -->
+</div>
+
+<!-- CHART 1 -->
 
 <div class="card">
+
 <div class="flex">
-<h3 data-t="revChannel">📈 Ricavi per Canale</h3>
+<h3>📈 Ricavi per Canale</h3>
+
 <select id="t1" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
 </select>
 </div>
+
 <canvas id="c1"></canvas>
+
+<div class="small" id="c1Mini"></div>
+
 </div>
 
+<!-- CHART 2 -->
+
 <div class="card">
+
 <div class="flex">
-<h3 data-t="profitEra">🏛️ Profitto per Epoca</h3>
+<h3>🏛️ Profitto per Epoca</h3>
+
 <select id="t2" onchange="drawCharts()">
 <option>bar</option><option>line</option><option>pie</option><option>doughnut</option>
 </select>
 </div>
+
 <canvas id="c2"></canvas>
+
+<div class="small" id="c2Mini"></div>
+
 </div>
 
+<!-- CHART 3 -->
+
 <div class="card">
+
 <div class="flex">
-<h3 data-t="roiEra">📊 ROI per Epoca</h3>
+<h3>📊 ROI per Epoca</h3>
+
 <select id="t3" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
 </div>
+
 <canvas id="c3"></canvas>
+
+<div class="small" id="c3Mini"></div>
+
 </div>
 
+<!-- CHART 4 -->
+
 <div class="card">
+
 <div class="flex">
-<h3 data-t="roiType">📊 ROI per Categoria</h3>
+<h3>📊 ROI per Categoria</h3>
+
 <select id="t4" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
 </div>
+
 <canvas id="c4"></canvas>
+
+<div class="small" id="c4Mini"></div>
+
 </div>
 
+<!-- CHART 5 -->
+
 <div class="card">
+
 <div class="flex">
-<h3 data-t="costPrice">💸 Costo vs Prezzo</h3>
+<h3>💸 Costo vs Prezzo</h3>
+
 <select id="t5" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
 </div>
+
 <canvas id="c5"></canvas>
+
+<div class="small" id="c5Mini"></div>
+
 </div>
 
+<!-- CHART 6 -->
+
 <div class="card">
+
 <div class="flex">
-<h3 data-t="volumeProfit">📦 Volume vs Profitto</h3>
+<h3>📦 Volume vs Profitto</h3>
+
 <select id="t6" onchange="drawCharts()">
 <option>bar</option><option>line</option>
 </select>
 </div>
+
 <canvas id="c6"></canvas>
+
+<div class="small" id="c6Mini"></div>
+
 </div>
 
 <!-- PREMIUM -->
 
 <div class="card">
 
-<h3 data-t="premium">💎 Impatto Vendite Premium (>1000€)</h3>
+<h3>💎 Impatto Vendite Premium (&gt;1000€)</h3>
 
 <div id="premiumImpact"></div>
 
-<div class="small" data-t="premium_help">
-
-Se poche vendite generano molto fatturato → strategia premium vincente.
-
-</div>
-
 <canvas id="c7"></canvas>
+
+<div class="small" id="c7Mini"></div>
 
 </div>
 
@@ -239,7 +280,7 @@ Se poche vendite generano molto fatturato → strategia premium vincente.
 
 <div class="card">
 
-<h3 data-t="ai">🤖 Consulente AI</h3>
+<h3>🤖 Consulente AI</h3>
 
 <div id="ai"></div>
 
@@ -248,98 +289,6 @@ Se poche vendite generano molto fatturato → strategia premium vincente.
 </div>
 
 <script>
-
-/* ================= LANG ================= */
-
-let lang="it";
-
-const TXT={
-
- it:{
-  title:"AntiquaVision — Smart Dashboard",
-  import:"📂 Importa File",
-  analyze:"Analizza",
-  dashboard:"📊 Dashboard",
-  revChannel:"Ricavi per Canale",
-  profitEra:"Profitto per Epoca",
-  roiEra:"ROI per Epoca",
-  roiType:"ROI per Categoria",
-  costPrice:"Costo vs Prezzo",
-  volumeProfit:"Volume vs Profitto",
-  premium:"Impatto Vendite Premium",
-  ai:"🤖 Consulente AI",
-  guide:"ROI >30% = Ottimo • 15–30% = Medio • <15% = Rischio",
-  kpi_help:"Ricavi = Incassi • Costi = Spese • Profitto = Guadagno • ROI = Rendimento",
-  premium_help:"Se poche vendite portano molto fatturato → punta su premium"
- },
-
- en:{
-  title:"AntiquaVision — Smart Dashboard",
-  import:"📂 Import File",
-  analyze:"Analyze",
-  dashboard:"📊 Dashboard",
-  revChannel:"Revenue by Channel",
-  profitEra:"Profit by Era",
-  roiEra:"ROI by Era",
-  roiType:"ROI by Category",
-  costPrice:"Cost vs Price",
-  volumeProfit:"Volume vs Profit",
-  premium:"Premium Impact",
-  ai:"🤖 AI Advisor",
-  guide:"ROI >30% = Great • 15–30% = Medium • <15% = Risk",
-  kpi_help:"Revenue = Income • Cost = Expenses • Profit = Earnings • ROI = Return",
-  premium_help:"Few sales = big revenue → premium strategy"
- },
-
- de:{
-  title:"AntiquaVision — Dashboard",
-  import:"📂 Datei Importieren",
-  analyze:"Analysieren",
-  dashboard:"📊 Übersicht",
-  revChannel:"Umsatz nach Kanal",
-  profitEra:"Gewinn nach Epoche",
-  roiEra:"ROI nach Epoche",
-  roiType:"ROI nach Kategorie",
-  costPrice:"Kosten vs Preis",
-  volumeProfit:"Volumen vs Gewinn",
-  premium:"Premium Verkäufe",
-  ai:"🤖 KI Berater",
-  guide:"ROI >30% = Sehr gut • <15% = Risiko",
-  kpi_help:"Umsatz • Kosten • Gewinn • ROI",
-  premium_help:"Wenige Verkäufe = hoher Umsatz"
- },
-
- fr:{
-  title:"AntiquaVision — Tableau",
-  import:"📂 Importer Fichier",
-  analyze:"Analyser",
-  dashboard:"📊 Tableau",
-  revChannel:"Revenus par Canal",
-  profitEra:"Profit par Époque",
-  roiEra:"ROI par Époque",
-  roiType:"ROI par Catégorie",
-  costPrice:"Coût vs Prix",
-  volumeProfit:"Volume vs Profit",
-  premium:"Ventes Premium",
-  ai:"🤖 Conseiller IA",
-  guide:"ROI >30% = Excellent • <15% = Risque",
-  kpi_help:"Revenus • Coûts • Profit • ROI",
-  premium_help:"Peu de ventes = gros chiffre"
- }
-
-};
-
-function setLang(l){
-
- lang=l;
-
- document.querySelectorAll("[data-t]").forEach(el=>{
-
-  let k=el.getAttribute("data-t");
-
-  if(TXT[l][k]) el.innerText=TXT[l][k];
- });
-}
 
 /* ================= DATA ================= */
 
@@ -425,6 +374,49 @@ function group(arr,k,v){
  return o;
 }
 
+/* ================= MINI DASH ================= */
+
+function miniStats(obj){
+
+ let vals=Object.values(obj);
+ let keys=Object.keys(obj);
+
+ if(!vals.length) return null;
+
+ let max=-1e9,min=1e9,sum=0;
+ let maxK="",minK="";
+
+ vals.forEach((v,i)=>{
+
+  sum+=v;
+
+  if(v>max){max=v;maxK=keys[i];}
+  if(v<min){min=v;minK=keys[i];}
+
+ });
+
+ return{
+  max,maxK,min,minK,avg:sum/vals.length
+ };
+}
+
+function renderMini(id,obj){
+
+ let s=miniStats(obj);
+ if(!s)return;
+
+ let el=document.getElementById(id+"Mini");
+ if(!el)return;
+
+ el.innerHTML=`
+
+ ⭐ Migliore: <b>${s.maxK}</b> (${s.max.toFixed(0)})<br>
+ ⚠️ Peggiore: <b>${s.minK}</b> (${s.min.toFixed(0)})<br>
+ 📊 Media: <b>${s.avg.toFixed(0)}</b>
+
+ `;
+}
+
 /* ================= RENDER ================= */
 
 function render(){
@@ -466,14 +458,23 @@ function renderKPI(){
 
 function drawCharts(){
 
- draw("c1","Revenue",group(filtered,"canale","prezzo"),t1.value);
- draw("c2","Profit",group(filtered,"epoca","profitto"),t2.value);
+ let o1=group(filtered,"canale","prezzo");
+ draw("c1","Ricavi",o1,t1.value); renderMini("c1",o1);
 
- draw("c3","ROI",roiBy("epoca"),t3.value);
- draw("c4","ROI",roiBy("tipo"),t4.value);
+ let o2=group(filtered,"epoca","profitto");
+ draw("c2","Profitto",o2,t2.value); renderMini("c2",o2);
 
- draw("c5","Cost vs Price",costVsPrice(),t5.value);
- draw("c6","Volume vs Profit",volumeProfit(),t6.value);
+ let o3=roiBy("epoca");
+ draw("c3","ROI",o3,t3.value); renderMini("c3",o3);
+
+ let o4=roiBy("tipo");
+ draw("c4","ROI",o4,t4.value); renderMini("c4",o4);
+
+ let o5=costVsPrice();
+ draw("c5","Margine",o5,t5.value); renderMini("c5",o5);
+
+ let o6=volumeProfit();
+ draw("c6","Profitto Medio",o6,t6.value); renderMini("c6",o6);
 
  drawPremiumChart();
 }
@@ -528,7 +529,7 @@ function costVsPrice(){
 
  filtered.forEach(x=>{
 
-  let k=x.tipo||"Other";
+  let k=x.tipo||"Altro";
 
   if(!r[k])r[k]={c:0,p:0};
 
@@ -551,7 +552,7 @@ function volumeProfit(){
 
  filtered.forEach(x=>{
 
-  let k=x.canale||"Other";
+  let k=x.canale||"Altro";
 
   if(!r[k])r[k]={v:0,p:0};
 
@@ -586,10 +587,7 @@ function analyzePremium(){
  });
 
  return {
-  total,
-  totalRev,
-  pCount,
-  pRev,
+  total,totalRev,pCount,pRev,
   percCount:(pCount/total*100)||0,
   percRev:(pRev/totalRev*100)||0
  };
@@ -628,6 +626,8 @@ function drawPremiumChart(){
  };
 
  draw("c7","Premium Revenue",o,"pie");
+
+ renderMini("c7",o);
 }
 
 /* ================= AI ================= */
@@ -651,7 +651,7 @@ function renderAI(){
 
 function max(o){
 
- let m=-1e9,k="N/A";
+ let m=-1e9,k="N/D";
 
  for(let x in o){
   if(o[x]>m){m=o[x];k=x;}
