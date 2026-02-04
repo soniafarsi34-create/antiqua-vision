@@ -2,8 +2,9 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>AntiquaVision Ultimate Enterprise</title>
+<title>AntiquaVision All In One</title>
 
+<!-- LIB -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
@@ -19,39 +20,43 @@ body{
 
 header{
  background:#111;
- padding:20px;
+ padding:15px;
  text-align:center;
  color:gold;
- font-size:26px;
+ font-size:24px;
  font-weight:bold;
 }
 
+.lang{
+ margin-top:5px;
+}
+
 .container{
- max-width:1900px;
+ max-width:1800px;
  margin:auto;
  padding:20px;
 }
 
 .card{
  background:#151922;
- padding:22px;
- border-radius:14px;
- margin-bottom:25px;
+ padding:20px;
+ border-radius:12px;
+ margin-bottom:20px;
 }
 
 button{
  background:gold;
  border:none;
- padding:8px 15px;
- border-radius:7px;
+ padding:6px 12px;
+ border-radius:6px;
  font-weight:bold;
  cursor:pointer;
 }
 
 input,select{
  width:100%;
- padding:7px;
- margin:5px 0;
+ padding:6px;
+ margin:4px 0;
  background:#0b0e14;
  color:white;
  border:1px solid #333;
@@ -59,20 +64,19 @@ input,select{
 
 select.inline{
  width:auto;
- margin-right:10px;
 }
 
 .grid{
  display:grid;
- grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
- gap:15px;
+ grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ gap:12px;
 }
 
 .kpi{
  background:#0b0e14;
  border:1px solid #333;
- padding:14px;
- border-radius:9px;
+ padding:12px;
+ border-radius:8px;
  text-align:center;
 }
 
@@ -82,10 +86,7 @@ select.inline{
  align-items:center;
 }
 
-.small{
- font-size:13px;
- color:#aaa;
-}
+.small{font-size:12px;color:#aaa}
 
 </style>
 </head>
@@ -93,7 +94,11 @@ select.inline{
 <body>
 
 <header>
-AntiquaVision — Ultimate Business Intelligence
+AntiquaVision — Business Intelligence
+<div class="lang">
+<button onclick="setLang('it')">🇮🇹 IT</button>
+<button onclick="setLang('en')">🇬🇧 EN</button>
+</div>
 </header>
 
 <div class="container">
@@ -104,13 +109,13 @@ AntiquaVision — Ultimate Business Intelligence
 
 <h3>📂 Import Dati</h3>
 
-<b>Dati Interni</b>
+<b>Interni</b>
 <input type="file" id="fileInternal">
 <button onclick="loadInternal()">Importa</button>
 
 <br><br>
 
-<b>Dati Shop</b>
+<b>Shop</b>
 <input type="file" id="fileShop">
 <button onclick="loadShop()">Importa</button>
 
@@ -124,10 +129,10 @@ AntiquaVision — Ultimate Business Intelligence
 
 <h3>🎯 Filtri</h3>
 
-<select id="filterChannel" class="inline" onchange="applyFilters()"></select>
-<select id="filterEra" class="inline" onchange="applyFilters()"></select>
-<select id="filterCountry" class="inline" onchange="applyFilters()"></select>
-<select id="filterType" class="inline" onchange="applyFilters()"></select>
+<select id="fChannel" class="inline" onchange="applyFilters()"></select>
+<select id="fEra" class="inline" onchange="applyFilters()"></select>
+<select id="fCountry" class="inline" onchange="applyFilters()"></select>
+<select id="fType" class="inline" onchange="applyFilters()"></select>
 
 <button onclick="resetFilters()">Reset</button>
 
@@ -177,7 +182,7 @@ AntiquaVision — Ultimate Business Intelligence
 
 <div class="card">
 <div class="flex">
-<h3>🏺 Profitto per Tipologia</h3>
+<h3>🏺 Tipologie</h3>
 <select id="t4" onchange="drawCharts()">
 <option>bar</option><option>pie</option><option>doughnut</option>
 </select>
@@ -200,7 +205,6 @@ AntiquaVision — Ultimate Business Intelligence
 <div class="card">
 
 <h3>🤖 Consulente AI</h3>
-
 <div id="ai"></div>
 
 </div>
@@ -212,21 +216,18 @@ AntiquaVision — Ultimate Business Intelligence
 <h3>💬 Domande Business</h3>
 
 <div class="small">
-Esempi:<br>
-• Cosa comprano gli americani<br>
-• Paese più profittevole<br>
-• Dove perdo soldi<br>
-• Miglior canale<br>
-• Miglior epoca
+Esempi: paese profitto, cosa comprano americani, miglior canale, epoca migliore
 </div>
 
 <input id="question">
 
-<button onclick="askQuestion()">Chiedi</button>
+<button onclick="ask()">Chiedi</button>
 
-<div id="answer" style="margin-top:10px;color:gold;"></div>
+<div id="answer" style="color:gold;margin-top:8px"></div>
 
 </div>
+
+<button onclick="exportCSV()">📤 Export Report</button>
 
 </div>
 
@@ -236,33 +237,38 @@ Esempi:<br>
 
 let internal=[],shop=[],all=[],filtered=[];
 let charts={};
+let lang="it";
+
+/* ================= LANG ================= */
+
+const TXT={
+ it:{growth:"Crescita",decline:"Calo",stable:"Stabile"},
+ en:{growth:"Growth",decline:"Decline",stable:"Stable"}
+};
+
+function setLang(l){lang=l;render();}
 
 /* ================= UTILS ================= */
 
 function num(v){
- return Number(
-  String(v||"")
-  .replace("€","")
-  .replace("%","")
-  .replace(",",".")
-  .replace(/\s/g,"")
- )||0;
+ return Number(String(v||"")
+ .replace("€","").replace("%","")
+ .replace(",",".").replace(/\s/g,""))||0;
 }
 
 /* ================= FILE ================= */
 
 function readFile(file,cb){
 
- let ext=file.name.split(".").pop().toLowerCase();
+ let e=file.name.split(".").pop().toLowerCase();
 
- if(ext==="xlsx"){
+ if(e==="xlsx"){
 
   let r=new FileReader();
 
-  r.onload=e=>{
-   let wb=XLSX.read(new Uint8Array(e.target.result),{type:"array"});
-   let s=wb.Sheets[wb.SheetNames[0]];
-   cb(XLSX.utils.sheet_to_json(s));
+  r.onload=a=>{
+   let wb=XLSX.read(new Uint8Array(a.target.result),{type:"array"});
+   cb(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
   };
 
   r.readAsArrayBuffer(file);
@@ -346,48 +352,43 @@ function update(){
 
 function buildFilters(){
 
- fill(filterChannel,"sito","Tutti Canali");
- fill(filterEra,"epoca","Tutte Epoche");
- fill(filterCountry,"paese","Tutti Paesi");
- fill(filterType,"tipo","Tutte Tipologie");
+ fill(fChannel,"sito","Tutti Canali");
+ fill(fEra,"epoca","Tutte Epoche");
+ fill(fCountry,"paese","Tutti Paesi");
+ fill(fType,"tipo","Tutte Tipologie");
 }
 
 function fill(el,key,label){
 
- let set=new Set();
+ let s=new Set();
 
- internal.forEach(x=>{
-  if(x[key]) set.add(x[key]);
- });
+ internal.forEach(x=>x[key]&&s.add(x[key]));
 
  el.innerHTML=`<option value="">${label}</option>`;
 
- set.forEach(v=>{
-  el.innerHTML+=`<option>${v}</option>`;
- });
+ s.forEach(v=>el.innerHTML+=`<option>${v}</option>`);
 }
 
 function applyFilters(){
 
- filtered=all.filter(x=>{
+ filtered=all.filter(x=>
 
-  if(filterChannel.value && x.sito!==filterChannel.value) return false;
-  if(filterEra.value && x.epoca!==filterEra.value) return false;
-  if(filterCountry.value && x.paese!==filterCountry.value) return false;
-  if(filterType.value && x.tipo!==filterType.value) return false;
+ (!fChannel.value||x.sito===fChannel.value)&&
+ (!fEra.value||x.epoca===fEra.value)&&
+ (!fCountry.value||x.paese===fCountry.value)&&
+ (!fType.value||x.tipo===fType.value)
 
-  return true;
- });
+ );
 
  render();
 }
 
 function resetFilters(){
 
- filterChannel.value="";
- filterEra.value="";
- filterCountry.value="";
- filterType.value="";
+ fChannel.value="";
+ fEra.value="";
+ fCountry.value="";
+ fType.value="";
 
  filtered=[...all];
 
@@ -401,7 +402,7 @@ function group(arr,k,v){
  let o={};
 
  arr.forEach(x=>{
-  if(!x[k]) return;
+  if(!x[k])return;
   o[x[k]]=(o[x[k]]||0)+(v?x[v]:1);
  });
 
@@ -412,10 +413,10 @@ function group(arr,k,v){
 
 function draw(id,label,obj,type){
 
- if(charts[id]) charts[id].destroy();
+ if(charts[id])charts[id].destroy();
 
  charts[id]=new Chart(document.getElementById(id),{
-  type:type,
+  type,
   data:{
    labels:Object.keys(obj),
    datasets:[{
@@ -431,7 +432,7 @@ function draw(id,label,obj,type){
 
 function render(){
 
- if(!filtered.length) return;
+ if(!filtered.length)return;
 
  renderKPI();
  drawCharts();
@@ -478,25 +479,23 @@ function drawCharts(){
 
 function drawAvg(){
 
- let map={};
+ let m={};
 
  filtered.forEach(x=>{
 
-  if(!x.epoca||!x.sito) return;
+  if(!x.epoca||!x.sito)return;
 
   let k=x.sito+" / "+x.epoca;
 
-  if(!map[k]) map[k]={t:0,c:0};
+  if(!m[k])m[k]={t:0,c:0};
 
-  map[k].t+=x.prezzo;
-  map[k].c++;
+  m[k].t+=x.prezzo;
+  m[k].c++;
  });
 
  let r={};
 
- for(let k in map){
-  r[k]=map[k].t/map[k].c;
- }
+ for(let k in m)r[k]=m[k].t/m[k].c;
 
  draw("c5","Prezzo Medio",r,t5.value);
 }
@@ -522,40 +521,37 @@ function renderAI(){
 
 function renderEnterprise(){
 
- let losses = filtered.filter(x=>x.profitto<0).length;
- let trend = forecast();
- let budget = planBudget();
- let risk = riskIndex();
+ let loss=filtered.filter(x=>x.profitto<0).length;
+ let trend=forecast();
+ let budget=Math.round(totalProfit()*0.4);
+ let risk=riskIndex();
 
- ai.innerHTML += `
+ ai.innerHTML+=`
 
  <hr>
 
- ❌ Vendite in perdita: <b>${losses}</b><br>
- 📈 Trend: <b>${trend}</b><br>
- 💸 Budget consigliato: <b>${budget}€</b><br>
- 🚨 Rischio: <b>${risk}</b><br>
+ ❌ Perdite: ${loss}<br>
+ 📈 Trend: ${trend}<br>
+ 💸 Budget: ${budget}€<br>
+ 🚨 Rischio: ${risk}<br>
 
  `;
 }
 
 function forecast(){
 
- let m=group(filtered,"mese","prezzo");
- let v=Object.values(m);
+ let m=Object.values(group(filtered,"mese","prezzo"));
 
- if(v.length<2) return "Insufficiente";
+ if(m.length<2)return TXT[lang].stable;
 
- return v[v.length-1]>v[0]?"Crescita":"Calo";
+ return m[m.length-1]>m[0]?TXT[lang].growth:TXT[lang].decline;
 }
 
-function planBudget(){
+function totalProfit(){
 
  let p=0;
-
  filtered.forEach(x=>p+=x.profitto);
-
- return Math.round(p*0.4);
+ return p;
 }
 
 function riskIndex(){
@@ -564,40 +560,46 @@ function riskIndex(){
 
  let r=l/filtered.length;
 
- if(r<0.1) return "Basso";
- if(r<0.25) return "Medio";
+ if(r<0.1)return"Basso";
+ if(r<0.25)return"Medio";
 
- return "Alto";
+ return"Alto";
 }
 
 /* ================= Q&A ================= */
 
-function askQuestion(){
+function ask(){
 
  let q=question.value.toLowerCase();
- let res="Nessun dato.";
+ let r="Nessun dato.";
 
- if(q.includes("usa")||q.includes("america")){
-  res="🇺🇸 Comprano: "+max(group(filtered,"tipo","prezzo"));
- }
+ if(q.includes("usa"))r="🇺🇸 "+max(group(filtered,"tipo","prezzo"));
+ if(q.includes("paese")&&q.includes("profit"))r="🌍 "+max(group(filtered,"paese","profitto"));
+ if(q.includes("perdo"))r="⚠️ "+min(group(filtered,"sito","profitto"));
+ if(q.includes("canale"))r="🏆 "+max(group(filtered,"sito","profitto"));
+ if(q.includes("epoca"))r="🏛️ "+max(group(filtered,"epoca","profitto"));
 
- if(q.includes("paese")&&q.includes("profit")){
-  res="🌍 Miglior paese: "+max(group(filtered,"paese","profitto"));
- }
+ answer.innerHTML=r;
+}
 
- if(q.includes("perdo")){
-  res="⚠️ Perdi su: "+min(group(filtered,"sito","profitto"));
- }
+/* ================= EXPORT ================= */
 
- if(q.includes("canale")){
-  res="🏆 Miglior canale: "+max(group(filtered,"sito","profitto"));
- }
+function exportCSV(){
 
- if(q.includes("epoca")){
-  res="🏛️ Miglior epoca: "+max(group(filtered,"epoca","profitto"));
- }
+ let csv="Nome,Prezzo,Profitto,Canale,Paese\n";
 
- answer.innerHTML=res;
+ filtered.forEach(x=>{
+  csv+=`${x.nome},${x.prezzo},${x.profitto},${x.sito},${x.paese}\n`;
+ });
+
+ let b=new Blob([csv]);
+
+ let a=document.createElement("a");
+
+ a.href=URL.createObjectURL(b);
+ a.download="report_antiquavision.csv";
+
+ a.click();
 }
 
 /* ================= MIN MAX ================= */
