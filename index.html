@@ -10,7 +10,7 @@
 
 <style>
 
-/* ===== COLOR SYSTEM ===== */
+/* ================= COLORS ================= */
 
 :root{
  --gold:#d4af37;
@@ -23,11 +23,14 @@
  --card:#151a2e;
 }
 
+/* ================= BASE ================= */
+
 body{
  margin:0;
  background:linear-gradient(180deg,var(--bg1),var(--bg2));
  color:#eee;
  font-family:"Segoe UI",Arial;
+ overflow-x:hidden;
 }
 
 header{
@@ -40,8 +43,8 @@ header{
  box-shadow:0 3px 12px black;
 }
 
-.lang{
- margin-top:8px;
+.lang button{
+ margin:3px;
 }
 
 .container{
@@ -50,6 +53,8 @@ header{
  padding:25px;
 }
 
+/* ================= CARDS ================= */
+
 .card{
  background:linear-gradient(180deg,#141a33,#12172a);
  padding:22px;
@@ -57,7 +62,18 @@ header{
  margin-bottom:24px;
  box-shadow:0 0 20px rgba(0,0,0,.5);
  border:1px solid #1f2750;
+
+ opacity:0;
+ transform:translateY(40px);
+ transition:all .7s ease;
 }
+
+.card.show{
+ opacity:1;
+ transform:translateY(0);
+}
+
+/* ================= BUTTONS ================= */
 
 button{
  background:linear-gradient(90deg,var(--gold),#ffd966);
@@ -66,7 +82,19 @@ button{
  border-radius:10px;
  font-weight:700;
  cursor:pointer;
+ transition:all .25s ease;
 }
+
+button:hover{
+ transform:translateY(-2px) scale(1.05);
+ box-shadow:0 8px 18px rgba(0,0,0,.4);
+}
+
+button:active{
+ transform:scale(.95);
+}
+
+/* ================= INPUT ================= */
 
 input,select{
  width:100%;
@@ -77,6 +105,8 @@ input,select{
  border:1px solid #2a3366;
  border-radius:8px;
 }
+
+/* ================= GRID ================= */
 
 .grid{
  display:grid;
@@ -90,12 +120,21 @@ input,select{
  padding:15px;
  border-radius:12px;
  text-align:center;
+ transition:.3s;
 }
+
+.kpi:hover{
+ background:#0c1230;
+ transform:scale(1.05);
+}
+
+/* ================= UTILITY ================= */
 
 .flex{
  display:flex;
  justify-content:space-between;
  align-items:center;
+ gap:10px;
 }
 
 .small{
@@ -105,7 +144,34 @@ input,select{
  margin-top:8px;
 }
 
-canvas{margin-top:12px}
+canvas{
+ margin-top:12px;
+ animation:fade .6s ease;
+}
+
+@keyframes fade{
+ from{opacity:0;transform:translateY(10px)}
+ to{opacity:1}
+}
+
+/* ================= EXPORT ================= */
+
+.export-btn{
+ margin-top:10px;
+ background:linear-gradient(90deg,#4f9cff,#3ad29f);
+ color:#000;
+}
+
+/* ================= SCROLL BAR ================= */
+
+::-webkit-scrollbar{
+ width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+ background:var(--gold);
+ border-radius:10px;
+}
 
 </style>
 </head>
@@ -128,8 +194,7 @@ canvas{margin-top:12px}
 <div class="container">
 
 <!-- IMPORT -->
-
-<div class="card">
+<div class="card section">
 
 <h3 data-t="import">📂 Importa File</h3>
 
@@ -142,146 +207,34 @@ canvas{margin-top:12px}
 </div>
 
 <!-- KPI -->
-
-<div class="card">
+<div class="card section">
 
 <h3 data-t="dashboard">📊 Dashboard</h3>
 
 <div class="grid" id="kpi"></div>
 
-<div class="small" data-t="kpiHelp">
-Ricavi = Incassi • Costi = Spese • Profitto = Guadagno • ROI = Rendimento
-</div>
+<div class="small" data-t="kpiHelp"></div>
 
 </div>
 
 <!-- GUIDE -->
-
-<div class="card">
+<div class="card section">
 
 <h3 data-t="guideTitle">📘 Guida</h3>
 
-<div class="small" data-t="guideText">
-
-ROI &gt;30% = Ottimo<br>
-15–30% = Medio<br>
-&lt;15% = Rischio<br><br>
-
-Premium &gt;30% = Punta su pezzi importanti
+<div class="small" data-t="guideText"></div>
 
 </div>
 
-</div>
+<!-- CHART TEMPLATE -->
 
-<!-- CHARTS -->
-
-<div class="card">
-<div class="flex">
-<h3 style="color:var(--blue)" data-t="revChannel">📈 Ricavi per Canale</h3>
-<select id="t1" onchange="drawCharts()">
-<option>bar</option><option>line</option><option>doughnut</option>
-</select>
-</div>
-<canvas id="c1"></canvas>
-<div class="small" id="c1Mini"></div>
-</div>
-
-<div class="card">
-<div class="flex">
-<h3 style="color:var(--green)" data-t="profitEra">🏛️ Profitto per Epoca</h3>
-<select id="t2" onchange="drawCharts()">
-<option>bar</option><option>line</option><option>doughnut</option>
-</select>
-</div>
-<canvas id="c2"></canvas>
-<div class="small" id="c2Mini"></div>
-</div>
-
-<div class="card">
-<div class="flex">
-<h3 style="color:var(--violet)" data-t="roiEra">📊 ROI per Epoca</h3>
-<select id="t3" onchange="drawCharts()">
-<option>bar</option><option>line</option>
-</select>
-</div>
-<canvas id="c3"></canvas>
-<div class="small" id="c3Mini"></div>
-</div>
-
-<div class="card">
-<div class="flex">
-<h3 style="color:var(--gold)" data-t="roiType">📊 ROI per Categoria</h3>
-<select id="t4" onchange="drawCharts()">
-<option>bar</option><option>line</option>
-</select>
-</div>
-<canvas id="c4"></canvas>
-<div class="small" id="c4Mini"></div>
-</div>
-
-<div class="card">
-<div class="flex">
-<h3 style="color:var(--red)" data-t="margin">💸 Margine</h3>
-<select id="t5" onchange="drawCharts()">
-<option>bar</option><option>line</option>
-</select>
-</div>
-<canvas id="c5"></canvas>
-<div class="small" id="c5Mini"></div>
-</div>
-
-<div class="card">
-<div class="flex">
-<h3 style="color:var(--blue)" data-t="volume">📦 Profitto Medio</h3>
-<select id="t6" onchange="drawCharts()">
-<option>bar</option><option>line</option>
-</select>
-</div>
-<canvas id="c6"></canvas>
-<div class="small" id="c6Mini"></div>
-</div>
-
-<!-- PREMIUM -->
-
-<div class="card">
-
-<h3 style="color:var(--gold)" data-t="premium">💎 Vendite Premium</h3>
-
-<div id="premiumImpact"></div>
-
-<canvas id="c7"></canvas>
-
-<div class="small" id="c7Mini"></div>
-
-</div>
-
-<!-- FORECAST -->
-
-<div class="card">
-
-<h3 style="color:var(--violet)" data-t="forecast">🔮 Previsioni</h3>
-
-<canvas id="c8"></canvas>
-
-<div class="small" id="forecastText"></div>
-
-</div>
-
-<!-- AI -->
-
-<div class="card">
-
-<h3 data-t="ai">🤖 Consulente AI</h3>
-
-<div id="ai"></div>
-
-</div>
+<div id="charts"></div>
 
 </div>
 
 <script>
 
-/* ========= LANGUAGE ========= */
+/* ================= LANGUAGE ================= */
 
 let lang="it";
 
@@ -292,18 +245,14 @@ it:{
  import:"📂 Importa File",
  analyze:"Analizza",
  dashboard:"📊 Dashboard",
- kpiHelp:"Ricavi = Incassi • Costi = Spese • Profitto = Guadagno • ROI = Rendimento",
+ kpiHelp:"Ricavi • Costi • Profitto • ROI",
  guideTitle:"📘 Guida",
- guideText:"ROI >30% = Ottimo • <15% = Rischio • Premium >30% = Punta su pezzi importanti",
- revChannel:"📈 Ricavi per Canale",
- profitEra:"🏛️ Profitto per Epoca",
- roiEra:"📊 ROI per Epoca",
- roiType:"📊 ROI per Categoria",
+ guideText:"ROI >30% = Ottimo • <15% = Rischio",
+ rev:"📈 Ricavi",
+ profit:"🏛️ Profitto",
+ roi:"📊 ROI",
  margin:"💸 Margine",
- volume:"📦 Profitto Medio",
- premium:"💎 Vendite Premium",
- forecast:"🔮 Previsioni",
- ai:"🤖 Consulente AI"
+ volume:"📦 Volume"
 },
 
 en:{
@@ -313,80 +262,39 @@ en:{
  dashboard:"📊 Dashboard",
  kpiHelp:"Revenue • Costs • Profit • ROI",
  guideTitle:"📘 Guide",
- guideText:"ROI >30% = Great • <15% = Risk",
- revChannel:"📈 Revenue by Channel",
- profitEra:"🏛️ Profit by Era",
- roiEra:"📊 ROI by Era",
- roiType:"📊 ROI by Category",
+ guideText:"ROI >30% = Great",
+ rev:"📈 Revenue",
+ profit:"🏛️ Profit",
+ roi:"📊 ROI",
  margin:"💸 Margin",
- volume:"📦 Avg Profit",
- premium:"💎 Premium Sales",
- forecast:"🔮 Forecast",
- ai:"🤖 AI Advisor"
-},
-
-de:{
- title:"AntiquaVision — Dashboard",
- import:"📂 Datei Importieren",
- analyze:"Analysieren",
- dashboard:"📊 Übersicht",
- kpiHelp:"Umsatz • Kosten • Gewinn • ROI",
- guideTitle:"📘 Anleitung",
- guideText:"ROI >30% = Sehr gut",
- revChannel:"📈 Umsatz pro Kanal",
- profitEra:"🏛️ Gewinn nach Epoche",
- roiEra:"📊 ROI nach Epoche",
- roiType:"📊 ROI nach Kategorie",
- margin:"💸 Marge",
- volume:"📦 Durchschnitt",
- premium:"💎 Premium Verkäufe",
- forecast:"🔮 Prognose",
- ai:"🤖 KI Berater"
-},
-
-fr:{
- title:"AntiquaVision — Tableau",
- import:"📂 Importer Fichier",
- analyze:"Analyser",
- dashboard:"📊 Tableau",
- kpiHelp:"Revenus • Coûts • Profit • ROI",
- guideTitle:"📘 Guide",
- guideText:"ROI >30% = Excellent",
- revChannel:"📈 Revenus par Canal",
- profitEra:"🏛️ Profit par Époque",
- roiEra:"📊 ROI par Époque",
- roiType:"📊 ROI par Catégorie",
- margin:"💸 Marge",
- volume:"📦 Profit Moyen",
- premium:"💎 Ventes Premium",
- forecast:"🔮 Prévisions",
- ai:"🤖 Conseiller IA"
+ volume:"📦 Volume"
 }
 
 };
 
 function setLang(l){
-
  lang=l;
-
  document.querySelectorAll("[data-t]").forEach(el=>{
-
-  let k=el.getAttribute("data-t");
-
+  let k=el.dataset.t;
   if(TXT[l][k]) el.innerText=TXT[l][k];
-
  });
 }
 
-/* ========= CORE ========= */
+/* ================= CORE ================= */
 
 let all=[],filtered=[];
 let charts={};
+
 const COLORS=["#4f9cff","#3ad29f","#ff6b6b","#9b7bff","#ffd966","#ff9f43"];
 
 function num(v){
- return Number(String(v||"").replace("€","").replace(",",".").replace(/\s/g,""))||0;
+ return Number(String(v||"")
+ .replace("€","")
+ .replace(",",".")
+ .replace(/\s/g,""))||0;
 }
+
+/* ================= FILE ================= */
 
 function loadFile(){
 
@@ -416,6 +324,8 @@ function loadFile(){
  }
 }
 
+/* ================= PREPARE ================= */
+
 function prepare(rows){
 
  all=rows.map(r=>({
@@ -432,12 +342,12 @@ function prepare(rows){
 
  filtered=[...all];
 
- res.innerHTML="✔️ "+all.length+" record";
+ res.innerHTML="✔️ "+all.length+" record caricati";
 
  render();
 }
 
-/* ========= ANALYSIS ========= */
+/* ================= TOOLS ================= */
 
 function group(arr,k,v){
 
@@ -451,42 +361,62 @@ function group(arr,k,v){
  return o;
 }
 
-function mini(id,obj){
-
- let k=Object.keys(obj),v=Object.values(obj);
- if(!v.length)return;
-
- let max=Math.max(...v),min=Math.min(...v);
- let avg=v.reduce((a,b)=>a+b,0)/v.length;
-
- document.getElementById(id+"Mini").innerHTML=`
-
- ⭐ Migliore: ${k[v.indexOf(max)]}<br>
- ⚠️ Peggiore: ${k[v.indexOf(min)]}<br>
- 📊 Media: ${avg.toFixed(0)}
-
- `;
-}
+/* ================= CHART ================= */
 
 function draw(id,label,obj,type){
 
  if(charts[id])charts[id].destroy();
 
  charts[id]=new Chart(document.getElementById(id),{
+
   type,
+
   data:{
    labels:Object.keys(obj),
    datasets:[{
     label,
     data:Object.values(obj),
-    backgroundColor:Object.keys(obj).map((_,i)=>COLORS[i%COLORS.length]),
-    borderWidth:1
+    backgroundColor:Object.keys(obj)
+    .map((_,i)=>COLORS[i%COLORS.length])
    }]
+  },
+
+  options:{
+   responsive:true,
+   animation:{
+    duration:1200,
+    easing:"easeOutQuart"
+   },
+   plugins:{
+    tooltip:{
+     backgroundColor:"#111",
+     padding:12,
+     cornerRadius:8,
+     displayColors:false
+    }
+   }
   }
+
  });
 }
 
+/* ================= EXPORT ================= */
+
+function exportPNG(id){
+
+ let c=document.getElementById(id);
+
+ let a=document.createElement("a");
+ a.download=id+".png";
+ a.href=c.toDataURL();
+ a.click();
+}
+
+/* ================= RENDER ================= */
+
 function render(){
+
+ /* KPI */
 
  let r=0,c=0,p=0;
 
@@ -508,25 +438,80 @@ function render(){
 
  `;
 
- let o1=group(filtered,"canale","prezzo");
- draw("c1","Ricavi",o1,t1.value); mini("c1",o1);
+ /* CHARTS */
 
- let o2=group(filtered,"epoca","profitto");
- draw("c2","Profitto",o2,t2.value); mini("c2",o2);
+ chartsBox.innerHTML="";
 
- let o3=group(filtered,"epoca","profitto");
- draw("c3","ROI",o3,t3.value); mini("c3",o3);
+ let defs=[
 
- let o4=group(filtered,"tipo","profitto");
- draw("c4","ROI",o4,t4.value); mini("c4",o4);
+  ["c1","canale","prezzo","Ricavi"],
+  ["c2","epoca","profitto","Profitto"],
+  ["c3","epoca","profitto","ROI"],
+  ["c4","tipo","profitto","Margine"],
+  ["c5","canale","profitto","Volume"]
 
- let o5=group(filtered,"tipo","profitto");
- draw("c5","Margine",o5,t5.value); mini("c5",o5);
+ ];
 
- let o6=group(filtered,"canale","profitto");
- draw("c6","Volume",o6,t6.value); mini("c6",o6);
+ charts.innerHTML="";
+
+ defs.forEach((d,i)=>{
+
+  let id=d[0];
+
+  charts.innerHTML+=`
+
+  <div class="card section">
+
+   <div class="flex">
+
+    <h3>${d[3]}</h3>
+
+    <select id="t${i}" onchange="render()">
+     <option>bar</option>
+     <option>line</option>
+     <option>doughnut</option>
+    </select>
+
+   </div>
+
+   <canvas id="${id}"></canvas>
+
+   <button class="export-btn" onclick="exportPNG('${id}')">
+    ⬇️ Esporta PNG
+   </button>
+
+  </div>
+  `;
+
+  let o=group(filtered,d[1],d[2]);
+
+  draw(id,d[3],o,document.getElementById("t"+i).value);
+
+ });
+
+ observe();
 
 }
+
+/* ================= ANIMATIONS ================= */
+
+const obs=new IntersectionObserver(e=>{
+
+ e.forEach(x=>{
+  if(x.isIntersecting) x.target.classList.add("show");
+ });
+
+});
+
+function observe(){
+
+ document.querySelectorAll(".section").forEach(s=>{
+  obs.observe(s);
+ });
+
+}
+
+observe();
 
 </script>
 
